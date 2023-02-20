@@ -1,5 +1,4 @@
 local vector2 = require("vector2")
-COMPONENT_ID = 0
 
 -- OBJECT
 local object = {}
@@ -11,6 +10,14 @@ object.new = function ()
     return self
 end
 
+Component_registry = {}
+Component_registry.comp_id = 0
+function Component_registry.register(type)
+    Component_registry[#Component_registry+1] = type
+    type.id = Component_registry.comp_id
+    Component_registry.comp_id = Component_registry.comp_id + 1
+end
+
 -- COMPONENT
 local component = {}
 component.new = function ()
@@ -20,16 +27,14 @@ component.new = function ()
 end
 
 -- COMPONENT - TRANSFORM
-COMPONENT = COMPONENT_ID + 1
-TRANSFORM = COMPONENT_ID
-local transform_comp = {}
-transform_comp.new = function ()
+local transform = {id = nil, name = "Transform"}
+transform.new = function ()
     local self = component.new()
-    self.id = TRANSFORM
-    self.name = "transform"
+    self.name = transform.name
     self.position = vector2.new(0, 0)
     return self
 end
+Component_registry.register(transform)
 
 -- ENTITY
 local entity = {}
@@ -41,12 +46,14 @@ entity.new = function()
     function self:add_component(comp)
         self.components[comp.id] = comp
         comp.owner = self
-    
-        print(string.format("added component %s", comp.name))
         return comp
     end
 
-    self.transform = self:add_component(transform_comp.new())
+    self.transform = self:add_component(transform.new())
+
+    function self:load()
+        print("loaded entity")
+    end
 
     function self:has_component(id)
         for key, value in pairs(self.components) do
@@ -57,9 +64,9 @@ entity.new = function()
         return false
     end
 
-    function self:get_component(id)
+    function self:get_component(type)
         for key, value in pairs(self.components) do
-            if value.id == id then
+            if value.id == type.id then
                 return self.components[key]
             end
         end
@@ -78,25 +85,27 @@ world.new = function ()
         self.entities[#self.entities+1] = entity
     end
 
-    function self:log()
-        for key, value in pairs(self.entities) do
-            print(value.name)
-        end
-    end
+    return self
+end
 
+local player = {}
+player.new = function()
+    local self = entity.new()
+
+    local base_load = self.load
+    function self:load()
+        base_load(self)
+        print("loaded player")
+    end
     return self
 end
 
 local function main()
-    local world_instance = world.new()
+    local _world = world.new()
 
-    local player = entity.new()
-    player.name = "player"
-
-    print(player.components[TRANSFORM].id)
-
-    player.transform.position.x = 10
-    print(player:has_component(TRANSFORM))
+    local _player = player.new()
+    _world.add_entity(_player)
+    _player:load()
 end
 
 main()
