@@ -1,10 +1,10 @@
-require "core.ecs.type_registry"
+require "core.ecs"
 local entity = require("core.ecs.entity")
 
-local player = Type_registry.create_entity_type("Player")
-player.new = function()
+local eplayer = Type_registry.create_entity_type("EPlayer")
+eplayer.new = function()
     local self = entity.new()
-    self.name = "Player"
+    self.type_id = eplayer
 
     local super_load = self.load
     function self:load()
@@ -14,9 +14,9 @@ player.new = function()
 
     local super_update = self.update
     function self:update(dt)
-        super_update(dt)
+        super_update(self, dt)
     end
     return self
 end
 
-return player
+return eplayer

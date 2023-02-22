@@ -1,0 +1,1 @@
+require "core.ecs.type_registry"

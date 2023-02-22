@@ -1,3 +1,4 @@
+require "core.ecs"
 local object = require("core.ecs.object")
 
 local component = {}

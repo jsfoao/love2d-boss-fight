@@ -1,3 +1,5 @@
+require "core.ecs"
+
 local object = {}
 object.new = function ()
     local self = {}

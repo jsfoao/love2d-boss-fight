@@ -1,5 +1,6 @@
+require "core.ecs"
 local object = require("core.ecs.object")
-local transform = require("core.components.c_transform")
+local transform = require("core.components.ctransform")
 
 local entity = {}
 entity.new = function()
@@ -8,6 +9,7 @@ entity.new = function()
     self.components = {}
 
     function self:add_component(component_type)
+        print(component_type.name)
         assert(Type_registry.is_valid_component(component_type))
         local _comp = component_type.new()
         self.components[#self.components+1] = _comp
