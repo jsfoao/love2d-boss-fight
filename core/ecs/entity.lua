@@ -49,3 +49,5 @@ entity.new = function()
 
     return self
 end
+
+return entity

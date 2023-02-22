@@ -10,3 +10,5 @@ transform.new = function ()
     self.position = vector2.new(0, 0)
     return self
 end
+
+return transform

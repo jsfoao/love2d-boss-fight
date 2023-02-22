@@ -18,3 +18,5 @@ player.new = function()
     end
     return self
 end
+
+return player

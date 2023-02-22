@@ -20,9 +20,9 @@ function Type_registry.create_entity_type(type_name)
     return _entity_type
 end
 
-function Type_registry.is_valid_component(type)
+function Type_registry.is_valid_component(type_name)
     for key, component_type in pairs(Type_registry.components) do
-        if type.type_id == component_type.type_id then
+        if type_name.type_id == component_type.type_id then
             return true
         end
     end
@@ -31,9 +31,11 @@ end
 
 function Type_registry.is_valid_entity(type)
     for key, entity_type in pairs(Type_registry.entities) do
-        if type.id == entity_type.id then
+        if type.type_id == entity_type.type_id then
             return true
         end
     end
     return false
 end
+
+return Type_registry

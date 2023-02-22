@@ -4,8 +4,8 @@ local player = require("game.scripts.player")
 
 local function main()
     local _world = world.new()
-    -- local _player = _world.create_entity(player, vector2.new(10,10))
-    -- print(_player.transform.postition)
+    local _player = _world:create_entity(player, vector2.new(10,10))
+    print(_player.transform.position)
 end
 
 main()

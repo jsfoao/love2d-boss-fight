@@ -11,3 +11,5 @@ object.new = function ()
 
     return self
 end
+
+return object

@@ -29,3 +29,5 @@ world.new = function ()
 
     return self
 end
+
+return world

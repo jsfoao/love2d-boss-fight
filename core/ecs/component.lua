@@ -14,3 +14,5 @@ component.new = function ()
 
     return self
 end
+
+return component
