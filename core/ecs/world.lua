@@ -24,7 +24,6 @@ world.new = function ()
     end
 
     function self:load()
-        print("loaded world")
         self.game_mode:load()
         for k, e in pairs(self.entities) do
             e:load()
@@ -34,7 +33,7 @@ world.new = function ()
     function self:update(dt)
         self.game_mode:update(dt)
         for k, e in pairs(self.entities) do
-            e:update()
+            e:update(dt)
         end
     end
 

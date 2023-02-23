@@ -7,12 +7,9 @@ component.new = function ()
     self.owner = nil
     self.enabled = true
 
-    function self:load()
-        print("loaded component")
-    end
+    function self:load() end
 
-    function self:update(dt)
-    end
+    function self:update(dt) end
 
     return self
 end

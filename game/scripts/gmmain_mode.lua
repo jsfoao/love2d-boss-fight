@@ -13,7 +13,6 @@ gmmain_mode.new = function ()
         self.camera = World:create_entity(ecamera, vector2.new(0, 0))
         Camera = self.camera.camera_comp
         Player = World:create_entity(eplayer, vector2.new(0,0))
-        Player:log()
     end
 
     function self:update(dt)

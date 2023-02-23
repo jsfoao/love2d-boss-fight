@@ -1,6 +1,6 @@
 require "core.ecs"
 local entity = require("core.ecs.entity")
-local crenderable = require("core.components.crenderable")
+local cmesh = require("core.components.cmesh")
 
 local eplayer = Type_registry.create_entity_type("EPlayer")
 eplayer.new = function()
@@ -9,17 +9,32 @@ eplayer.new = function()
     self.name = "Player"
 
     -- components
-    self:add_component(crenderable)
+    self.mesh_comp = self:add_component(cmesh)
 
     local super_load = self.load
     function self:load()
         super_load(self)
-        print("loaded player")
+        self:log()
     end
 
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
+        if love.keyboard.isDown('up') then
+            self.transform.position.y = self.transform.position.y - 2 * dt
+        end
+        if love.keyboard.isDown('down') then
+            self.transform.position.y = self.transform.position.y + 2 * dt
+        end
+        if love.keyboard.isDown('left') then
+            self.transform.position.x = self.transform.position.x - 2 * dt
+        end
+        if love.keyboard.isDown('right') then
+            self.transform.position.x = self.transform.position.x + 2 * dt
+        end
+        
+
+        self.transform.rotation = self.transform.rotation + 45 * dt
     end
     return self
 end

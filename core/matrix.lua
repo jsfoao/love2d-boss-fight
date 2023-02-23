@@ -229,7 +229,7 @@ function matrix.from(v2)
 	return setmetatable(t, matrix_meta)
 end
 
-function matrix.to(m)
+function matrix.to_vec(m)
 	local v2 = vector2.new(m[1][1], m[2][1])
 	return v2
 end

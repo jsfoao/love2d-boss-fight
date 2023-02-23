@@ -6,12 +6,15 @@ WORLD_SPACE = 1
 local renderable = {}
 renderable.new = function ()
     local self = {}
-    self.space = nil
+    self.space = WORLD_SPACE
     self.position = vector2.new()
     self.scale = vector2.new()
-    self.rotation = vector2.new()
+    self.rotation = 0
+    self.z = 0
 
-    function self:draw() end
+    function self:draw()
+        print("draw here")
+    end
     return self
 end
 

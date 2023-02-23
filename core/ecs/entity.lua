@@ -10,7 +10,6 @@ entity.new = function()
     self.enabled = true
 
     function self:add_component(component_type)
-        print(component_type.name)
         assert(Type_registry.is_valid_component(component_type))
         local _comp = component_type.new()
         self.components[#self.components+1] = _comp
@@ -50,6 +49,9 @@ entity.new = function()
     end
 
     function self:log()
+        print("- ENTITY -")
+        print(self.name)
+        print("- COMPONENTS -")
         for k, c in pairs(self.components) do
             print(c.name)
         end
