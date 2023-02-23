@@ -12,7 +12,8 @@ gmmain_mode.new = function ()
     function self:load()
         self.camera = World:create_entity(ecamera, vector2.new(0, 0))
         Camera = self.camera.camera_comp
-        local _player = World:create_entity(eplayer, vector2.new(10,10))
+        Player = World:create_entity(eplayer, vector2.new(0,0))
+        Player:log()
     end
 
     function self:update(dt)
@@ -32,7 +33,6 @@ gmmain_mode.new = function ()
         if love.keyboard.isDown('o') then
             self.camera.z = self.camera.z + (1 * dt)
         end
-
         if love.keyboard.isDown('l') then
             self.camera.z = self.camera.z - (1 * dt)
         end

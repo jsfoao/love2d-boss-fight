@@ -6,8 +6,9 @@ local ctransform = Type_registry.create_component_type("CTransform")
 ctransform.new = function ()
     local self = component.new()
     self.type_id = ctransform.type_id
-
-    self.position = vector2.new(0, 0)
+    self.position = vector2.new(0,0)
+    self.scale = vector2.new(1,1)
+    self.rotation = vector2.new(0,0)
     return self
 end
 

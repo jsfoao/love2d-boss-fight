@@ -38,6 +38,12 @@ world.new = function ()
         end
     end
 
+    function self:log()
+        for k, e in pairs(self.entities) do
+            print(e.name)
+        end
+    end
+
     return self
 end
 

@@ -11,13 +11,17 @@ ccamera.new = function ()
     self.position = vector2.new(0, 0)
     self.z = 0
     self.view_mtx = nil
-    self.zoom_mtx = nil
 
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
-        self.view_mtx = matrix.trans(-self.position.x, self.position.y)
-        self.zoom_mtx = matrix.mulnum(matrix.scale(self.z + 1, self.z + 1), 50)
+        local h_width = love.graphics.getWidth() / 2
+        local h_height = love.graphics.getHeight() / 2
+        local model = matrix:new(3, "I")
+        model = matrix.mul(model, matrix.translate(-self.position.x + h_width, self.position.y + h_height))
+        model = matrix.mul(model, matrix.scale(self.z + 1, self.z + 1))
+        model = matrix.mul(model, matrix.scale(love.graphics.getWidth() / 10, love.graphics.getHeight() / 10))
+        self.view_mtx = model
     end
 
     return self

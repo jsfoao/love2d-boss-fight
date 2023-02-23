@@ -7,6 +7,7 @@ entity.new = function()
     local self = object.new()
     self.world = nil
     self.components = {}
+    self.enabled = true
 
     function self:add_component(component_type)
         print(component_type.name)
@@ -37,7 +38,6 @@ entity.new = function()
     end
 
     function self:load()
-        print("loaded entity")
         for k, c in pairs(self.components) do
             c:load()
         end
@@ -46,6 +46,12 @@ entity.new = function()
     function self:update(dt)
         for k, c in pairs(self.components) do
             c:update(dt)
+        end
+    end
+
+    function self:log()
+        for k, c in pairs(self.components) do
+            print(c.name)
         end
     end
 

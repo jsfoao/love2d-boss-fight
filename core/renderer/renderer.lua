@@ -3,6 +3,10 @@ renderer.new = function ()
     local self = {}
     self.queue = {}
 
+    function self:load()
+        love.graphics.setBackgroundColor({0.1,0.1,0.1})
+    end
+    
     function self:submit(renderable)
         self.queue[#self.queue+1] = renderable
     end

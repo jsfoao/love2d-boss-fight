@@ -5,6 +5,7 @@ local component = {}
 component.new = function ()
     local self = object.new()
     self.owner = nil
+    self.enabled = true
 
     function self:load()
         print("loaded component")

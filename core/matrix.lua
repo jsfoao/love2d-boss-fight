@@ -224,17 +224,15 @@ function matrix.mul( m1, m2 )
 	return setmetatable( mtx, matrix_meta )
 end
 
---// matrix.mul ( m1, v2 )
--- Multiply two matrices; m1 columns must be equal to m2 rows
--- e.g. #m1[1] == #m2
-function matrix.mulv2( m1, v2 )
-	-- multiply rows with columns
-	local _v = vector2.new(m1[1][1] * v2.x + m1[1][2] * v2.y, m1[2][1] * v2.x + m1[2][2] * v2.y)
-	return _v
+function matrix.from(v2)
+	local t = matrix:new({v2.x, v2.y, 1})
+	return setmetatable(t, matrix_meta)
 end
 
-
-
+function matrix.to(m)
+	local v2 = vector2.new(m[1][1], m[2][1])
+	return v2
+end
 --//  matrix.div ( m1, m2 )
 -- Divide two matrices; m1 columns must be equal to m2 rows
 -- m2 must be square, to be inverted,
@@ -1045,7 +1043,7 @@ function matrix.solve( m1 )
 end
 
 -- EXTENSIONS
-matrix.trans = function (dx,dy)
+matrix.translate = function (dx,dy)
 	local t = {}
 	t[1] = { 1, 0, dx}
 	t[2] = { 0, 1, dy}
