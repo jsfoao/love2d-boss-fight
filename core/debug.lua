@@ -1,5 +1,6 @@
 local matrix = require("core.matrix")
 local vector2 = require("core.vector2")
+local mesh = require("core.renderer.mesh")
 
 function debug.line(from, to, rgba)
     if Camera.view_mtx == nil then
@@ -28,11 +29,31 @@ function debug.line(from, to, rgba)
     love.graphics.line({f_vec[1][1], f_vec[2][1], t_vec[1][1], t_vec[2][1]})
 end
 
-function debug.circle(mode, pos, radius, segments, rgba)
-    if Camera.view_mtx == nil then
-        return
+function debug.mesh(mode, pos, scale, rot, mesh, rgba)
+    local model = matrix:new(3, "I")
+    model = matrix.mul(model, matrix.translate(pos.x, pos.y))
+    model = matrix.mul(model, matrix.scale(scale.x, scale.y))
+    model = matrix.mul(model, matrix.rotate(math.rad(rot)))
+    local mtx = matrix.mul(Camera.view_mtx, model)
+
+    local verts = {}
+    local msh = mesh
+    for i = 1, #msh, 2 do
+        local point = matrix:new({msh[i], msh[i+1], 1})
+        local final = matrix.mul(mtx, point)
+        verts[i] = final[1][1]
+        verts[i+1] = final[2][1]
     end
 
+    love.graphics.setColor(rgba)
+    love.graphics.polygon(mode, verts)
+end
+
+function debug.quad(mode, pos, scale, rot, rgba)
+    debug.mesh(mode, pos, scale, rot, mesh.quad, rgba)
+end
+
+function debug.circle(mode, pos, radius, segments, rgba)
     local p = matrix:new({pos.x, pos.y, 1})
     local m = matrix:new(3, "I")
     m = matrix.mul(m, matrix.translate(p[1][1], p[2][1]))

@@ -38,10 +38,7 @@ gmmain_mode.new = function ()
     end
 
     function self:draw()
-        local origin = vector2.new(0,0)
-        debug.line(origin, origin + vector2.new(1,0) * 0.5, {1,0,0})
-        debug.line(origin, origin + vector2.new(0,1) * 0.5, {0,1,0})
-        debug.circle("fill", origin, 5, 10, {1,1,1})
+        debug.handles(vector2.zero, vector2.new(1,0), 1)
     end
 
     return self

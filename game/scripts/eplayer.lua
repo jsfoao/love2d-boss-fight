@@ -1,6 +1,8 @@
 require "core.ecs"
 local entity = require("core.ecs.entity")
 local cmesh = require("core.components.cmesh")
+local cbox_collider = require("core.components.cbox_collider")
+local vector2 = require("core.vector2")
 
 local eplayer = Type_registry.create_entity_type("EPlayer")
 eplayer.new = function()
@@ -10,10 +12,12 @@ eplayer.new = function()
 
     -- components
     self.mesh_comp = self:add_component(cmesh)
+    self.box_comp = self:add_component(cbox_collider)
 
     local super_load = self.load
     function self:load()
         super_load(self)
+        self.box_comp.scale = vector2.new(2,2)
         self:log()
     end
 
@@ -44,6 +48,12 @@ eplayer.new = function()
         end
         
         self.transform.rotation = self.transform.rotation + 45 * dt
+    end
+
+    local super_draw = self.draw
+    function self:draw()
+        super_draw(self)
+        debug.handles(self.transform.position, self.transform.right, 1)
     end
     return self
 end
