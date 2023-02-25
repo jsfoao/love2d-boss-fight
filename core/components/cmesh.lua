@@ -38,6 +38,7 @@ cmesh.new = function ()
         Renderer:submit(self)
     end
 
+    -- draw call, has to be caled inside love.draw
     function self:draw()
         local pos = self.position
         local scl = self.scale

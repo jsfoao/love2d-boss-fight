@@ -13,6 +13,7 @@ ecamera.new = function ()
     local super_load = self.load
     function self:load()
         super_load(self)
+        self.transform.debug = false
     end
 
     local super_update = self.update

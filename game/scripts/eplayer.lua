@@ -20,6 +20,16 @@ eplayer.new = function()
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
+        if Input.get_key_down(Key.H) then
+            print("down")
+        end
+        if Input.get_key_hold(Key.H) then
+            print("hold")
+        end
+        if Input.get_key_up(Key.H) then
+            print("up")
+        end
+
         if love.keyboard.isDown('up') then
             self.transform.position.y = self.transform.position.y - 2 * dt
         end

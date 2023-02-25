@@ -41,6 +41,9 @@ ctransform.new = function ()
     end
 
     function self:draw()
+        if self.debug == false then
+            return
+        end
         debug.handles(self.position, self.right, 0.5)
     end
     return self
