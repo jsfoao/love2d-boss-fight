@@ -48,6 +48,12 @@ entity.new = function()
         end
     end
 
+    function self:draw()
+        for k, c in pairs(self.components) do
+            c:draw()
+        end
+    end
+
     function self:log()
         print("- ENTITY -")
         print(self.name)

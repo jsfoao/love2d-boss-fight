@@ -8,6 +8,8 @@ game_mode.new = function ()
     function self:load() end
 
     function self:update(dt) end
+    
+    function self:draw(dt) end
     return self
 end
 

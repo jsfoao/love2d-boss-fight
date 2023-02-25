@@ -37,6 +37,13 @@ world.new = function ()
         end
     end
 
+    function self:draw()
+        self.game_mode:draw()
+        for k, e in pairs(self.entities) do
+            e:draw()
+        end
+    end
+
     function self:log()
         for k, e in pairs(self.entities) do
             print(e.name)

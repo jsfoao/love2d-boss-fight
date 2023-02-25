@@ -22,7 +22,6 @@ cmesh.new = function ()
     local super_load = self.load
     function self:load()
         super_load(self)
-        print("load")
     end
 
     local super_update = self.update

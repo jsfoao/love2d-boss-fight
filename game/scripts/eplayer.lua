@@ -33,7 +33,6 @@ eplayer.new = function()
             self.transform.position.x = self.transform.position.x + 2 * dt
         end
         
-
         self.transform.rotation = self.transform.rotation + 45 * dt
     end
     return self

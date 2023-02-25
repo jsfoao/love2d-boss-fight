@@ -13,7 +13,6 @@ renderable.new = function ()
     self.z = 0
 
     function self:draw()
-        print("draw here")
     end
     return self
 end

@@ -32,18 +32,20 @@ renderer.new = function ()
         end
         
         -- draw world renderables
-        for k, r in pairs(self.world_queue[1]) do
-            r:draw()
-            table.remove(self.world_queue[1], k)
+        for i = 1, self.layers, 1 do
+            for k, r in pairs(self.world_queue[i]) do
+                r:draw()
+                table.remove(self.world_queue[i], k)
+            end
         end
 
-        -- -- draw screen renderables on top
-        -- for i = 1, self.layers, 1 do
-        --     for k, r in pairs(self.screen_queue[i]) do
-        --         r:draw()
-        --         table.remove(self.screen_queue[i], k)
-        --     end
-        -- end
+        -- draw screen renderables on top
+        for i = 1, self.layers, 1 do
+            for k, r in pairs(self.screen_queue[i]) do
+                r:draw()
+                table.remove(self.screen_queue[i], k)
+            end
+        end
     end
     return self
 end

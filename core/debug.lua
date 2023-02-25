@@ -2,6 +2,10 @@ local matrix = require("core.matrix")
 local vector2 = require("core.vector2")
 
 function debug.line(from, to, rgba)
+    if Camera.view_mtx == nil then
+        return
+    end
+
     local f = matrix:new({from.x, from.y, 1})
     local t = matrix:new({to.x, to.y, 1})
 
@@ -25,6 +29,10 @@ function debug.line(from, to, rgba)
 end
 
 function debug.circle(mode, pos, radius, segments, rgba)
+    if Camera.view_mtx == nil then
+        return
+    end
+
     local p = matrix:new({pos.x, pos.y, 1})
     local m = matrix:new(3, "I")
     m = matrix.mul(m, matrix.translate(p[1][1], p[2][1]))
@@ -35,4 +43,14 @@ function debug.circle(mode, pos, radius, segments, rgba)
 
     love.graphics.setColor(rgba)
     love.graphics.circle(mode, center[1][1], center[2][1], radius, segments)
+end
+
+function debug.handles(pos, right, size)
+    if Camera.view_mtx == nil then
+        return
+    end
+    local forward = vector2.new(-right.y, right.x)
+    debug.line(pos, pos + right * size, {1,0,0})
+    debug.line(pos, pos + forward * size, {0,1,0})
+    debug.circle("fill", pos, 5, 10, {1,1,1})
 end
