@@ -16,7 +16,7 @@ end
 function Type_registry.create_entity_type(type_name)
     local _entity_type = { type_id = Type_registry.entity_id, name = type_name }
     Type_registry.entity_id = Type_registry.entity_id + 1
-    Type_registry.entities[#Type_registry.components+1] = _entity_type
+    Type_registry.entities[#Type_registry.entities+1] = _entity_type
     return _entity_type
 end
 

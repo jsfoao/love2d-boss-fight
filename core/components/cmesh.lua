@@ -19,6 +19,10 @@ cmesh.new = function ()
     self.rotation = 0
     self.z = 0
 
+    self.mode = "fill"
+    self.color = {1,1,1}
+
+    self.debug = { verts = true }
     local super_load = self.load
     function self:load()
         super_load(self)
@@ -57,11 +61,13 @@ cmesh.new = function ()
             local final = matrix.mul(mtx, point)
             verts[i] = final[1][1]
             verts[i+1] = final[2][1]
-            love.graphics.circle("fill", final[1][1], final[2][1], 4)
+            if self.debug.verts == true then
+                love.graphics.circle("fill", final[1][1], final[2][1], 4)
+            end
         end
 
-        love.graphics.setColor({1,1,1})
-        love.graphics.polygon("line", verts)
+        love.graphics.setColor(self.color)
+        love.graphics.polygon(self.mode, verts)
     end
 
     return self

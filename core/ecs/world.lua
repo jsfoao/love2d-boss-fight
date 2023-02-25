@@ -6,6 +6,7 @@ world.new = function ()
     local self = object.new()
     self.entities = {}
     self.game_mode = nil
+    self.physics = nil
     
     function self:create_entity(entity_type, position)
         assert(Type_registry.is_valid_entity(entity_type))
@@ -24,6 +25,7 @@ world.new = function ()
     end
 
     function self:load()
+        self.physics = love.physics.newWorld(0,0)
         self.game_mode:load()
         for k, e in pairs(self.entities) do
             e:load()

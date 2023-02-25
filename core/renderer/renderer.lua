@@ -9,11 +9,11 @@ renderer.new = function ()
         love.graphics.setBackgroundColor({0.1,0.1,0.1})
 
         -- initiate render z depth layers
-        for i = 1, self.layers, 1 do
+        for i = 1, self.layers+1, 1 do
             self.world_queue[i] = {}
         end
 
-        for i = 1, self.layers, 1 do
+        for i = 1, self.layers+1, 1 do
             self.screen_queue[i] = {}
         end
     end
@@ -32,15 +32,16 @@ renderer.new = function ()
         end
         
         -- draw world renderables
-        for i = 1, self.layers, 1 do
+        for i = 1, self.layers+1, 1 do
             for k, r in pairs(self.world_queue[i]) do
+                print(r.owner.name)
                 r:draw()
                 table.remove(self.world_queue[i], k)
             end
         end
 
         -- draw screen renderables on top
-        for i = 1, self.layers, 1 do
+        for i = 1, self.layers+1, 1 do
             for k, r in pairs(self.screen_queue[i]) do
                 r:draw()
                 table.remove(self.screen_queue[i], k)

@@ -18,7 +18,7 @@ eplayer.new = function()
     function self:load()
         super_load(self)
         self.box_comp.scale = vector2.new(2,2)
-        self:log()
+        self.mesh_comp.z = 1
     end
 
     local super_update = self.update

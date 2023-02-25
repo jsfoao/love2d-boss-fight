@@ -11,6 +11,8 @@ function love.load()
     World = world.new()
     World:init_game_mode(main_mode)
     World:load()
+
+    love.physics.newWorld()
     
     Renderer = renderer.new()
     Renderer:load()

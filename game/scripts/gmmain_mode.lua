@@ -2,16 +2,25 @@ local game_mode = require("core.ecs.game_mode")
 local vector2 = require("core.vector2")
 local eplayer = require("game.scripts.eplayer")
 local ecamera = require("core.entities.ecamera")
+local eprimitive = require("core.entities.eprimitive")
+local mesh = require("core.renderer.mesh")
 
 local gmmain_mode = {}
 gmmain_mode.new = function ()
     local self = game_mode.new()
 
+    -- entities
     self.camera = nil
+    -- self.cube = nil
 
     function self:load()
-        self.camera = World:create_entity(ecamera, vector2.new(0, 0))
+        self.camera = World:create_entity(ecamera, vector2.new(0,0))
         Camera = self.camera.camera_comp
+        
+        self.cube = World:create_entity(eprimitive, vector2.zero)
+        self.cube.mesh = mesh.quad
+        self.cube.mesh_comp.color = {0.5,0.5,0.5}
+        
         Player = World:create_entity(eplayer, vector2.new(0,0))
     end
 
