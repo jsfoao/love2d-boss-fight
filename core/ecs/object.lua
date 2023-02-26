@@ -4,7 +4,7 @@ local object = {}
 object.new = function ()
     local self = {}
     self.type_id = -1
-    self.id = -1
+    self.id = Type_registry.generate_uuid()
     self.name = "default"
     self.enabled = true
 

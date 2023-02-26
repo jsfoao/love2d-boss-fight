@@ -18,19 +18,22 @@ gmmain_mode.new = function ()
         Camera = self.camera.camera_comp
         
         -- cube
-        self.cube = World:create_entity(eprimitive, vector2.zero)
+        self.cube = World:create_entity(eprimitive, vector2.new(0,2))
         self.cube.mesh = mesh.quad
         self.cube.mesh_comp.color = {0.5,0.5,0.5}
-        self.cube.velocity.y = 0
+        self.cube.name = "Cube"
+        self.cube.rb_comp:set_linear_velocity(vector2.new(0,2))
+        self.cube.box_comp.debug = true
 
         -- platform
-        self.platform = World:create_entity(eprimitive, vector2.new(2,0))
+        self.platform = World:create_entity(eprimitive, vector2.new(0,5))
+        self.platform.transform.scale = vector2.new(20,1)
         self.platform.mesh = mesh.quad
         self.platform.mesh_comp.color = {1,1,1}
-        self.platform.velocity.y = 0
+        self.platform.name = "Platform"
         
-        Player = World:create_entity(eplayer, vector2.new(0,0))
-        Player.enabled = false
+        -- Player = World:create_entity(eplayer, vector2.new(0,0))
+        -- Player.enabled = false
     end
 
     function self:update(dt)

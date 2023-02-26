@@ -60,11 +60,13 @@ entity.new = function()
 
     function self:log()
         print("- ENTITY -")
+        print(self.id)
         print(self.name)
         print("- COMPONENTS -")
         for k, c in pairs(self.components) do
             print(c.name)
         end
+        print()
     end
 
     return self

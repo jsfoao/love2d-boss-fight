@@ -16,9 +16,67 @@ cbox_collider.new = function ()
     self.position = vector2.zero
     self.rotation = 0
     self.scale = vector2.new(1,1)
-    self.lock = { pos = true, scale = false, rotation = false}
+    self.lock = { pos = true, scale = true, rotation = false}
+    self.other_colliders = {}
 
-    self.debug_color = {1,1,1}
+    -- callbacks
+    self.on_collision_enter_callback = nil
+    self.on_collision_stay_callback = nil
+    self.on_collision_exit_callback = nil
+
+    -- debug
+    self.debug_color = {1,0,0}
+    self.debug = false
+
+    function self:on_collision_enter(other)
+        print(#self.other_colliders)
+        if not (self.on_collision_enter_callback == nil) then
+            self:on_collision_callback(other)
+        end
+    end
+
+    function self:on_collision_stay(other)
+        if not (self.on_collision_stay_callback == nil) then
+            self:on_collision_stay(other)
+        end
+    end
+
+    function self:on_collision_exit(other)
+        if not (self.on_collision_exit_callback == nil) then
+            self:on_collision_exit(other)
+        end
+    end
+
+    function self:add_collider(other)
+        for key, col in pairs(self.other_colliders) do
+            -- collider is already in table
+            if col.id == other.id then
+                self:on_collision_stay(other)
+                return
+            end
+        end
+        table.insert(self.other_colliders, other)
+        self:on_collision_enter(other)
+    end
+
+    function self:remove_collider(other)
+        for i = 1, #self.other_colliders, 1 do
+            -- exit when sucessfully removed existing collider
+            if self.other_colliders[i].id == other.id then
+                table.remove(self.other_colliders, i)
+                self:on_collision_exit(other)
+                return
+            end
+        end
+    end
+
+    function self:sweep(direction)
+        self.position = self.position + direction
+    end
+
+    function self:is_colliding()
+        return not (#self.other_colliders == 0)
+    end
 
     local super_update = self.update
     function self:update(dt)
@@ -39,10 +97,24 @@ cbox_collider.new = function ()
             y = { min = self.position.y - hscale.y, max = self.position.y + hscale.y }
         }
 
-        if collision.point_inside_aabb(vector2.zero, self.box) then
-            self.debug_color = {0,1,0}
-        else
-            self.debug_color = {1,0,0}
+        local colliders = {}
+        for key, e in pairs(World.entities) do
+            if e.enabled == true and not (e.id == self.owner.id) then
+                if e:has_component(cbox_collider) then
+                    local col = e:get_component(cbox_collider)
+                    table.insert(colliders, col)
+                end
+            end
+        end
+
+        for key, col in pairs(colliders) do
+            if collision.intersect_aabb(col.box, self.box) then
+                self:add_collider(col)
+                self.debug_color = {0,1,0}
+            else
+                self:remove_collider(col)
+                self.debug_color = {1,0,0}
+            end
         end
     end
 
