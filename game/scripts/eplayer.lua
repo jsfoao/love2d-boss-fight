@@ -19,21 +19,12 @@ eplayer.new = function()
         super_load(self)
         self.box_comp.scale = vector2.new(2,2)
         self.mesh_comp.z = 1
+        self.mesh_comp.color = {0,0,1}
     end
 
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
-        if Input.get_key_down(Key.H) then
-            print("down")
-        end
-        if Input.get_key_hold(Key.H) then
-            print("hold")
-        end
-        if Input.get_key_up(Key.H) then
-            print("up")
-        end
-
         if love.keyboard.isDown('up') then
             self.transform.position.y = self.transform.position.y - 2 * dt
         end
@@ -53,7 +44,6 @@ eplayer.new = function()
     local super_draw = self.draw
     function self:draw()
         super_draw(self)
-        debug.handles(self.transform.position, self.transform.right, 1)
     end
     return self
 end

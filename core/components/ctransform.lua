@@ -22,7 +22,7 @@ ctransform.new = function ()
     self.forward = vector2.new(0,0)
 
     -- debug
-    self.debug = true
+    self.debug = false
 
     local super_update = self.update
     function self:update(dt)
@@ -44,7 +44,7 @@ ctransform.new = function ()
         if self.debug == false then
             return
         end
-        debug.handles(self.position, self.right, 0.5)
+        debug.handles(self.position, self.right, 1)
     end
     return self
 end

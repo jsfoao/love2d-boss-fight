@@ -25,7 +25,6 @@ world.new = function ()
     end
 
     function self:load()
-        self.physics = love.physics.newWorld(0,0)
         self.game_mode:load()
         for k, e in pairs(self.entities) do
             e:load()
@@ -35,14 +34,18 @@ world.new = function ()
     function self:update(dt)
         self.game_mode:update(dt)
         for k, e in pairs(self.entities) do
-            e:update(dt)
+            if e.enabled == true then
+                e:update(dt)
+            end
         end
     end
 
     function self:draw()
         self.game_mode:draw()
         for k, e in pairs(self.entities) do
-            e:draw()
+            if e.enabled == true then
+                e:draw()
+            end
         end
     end
 

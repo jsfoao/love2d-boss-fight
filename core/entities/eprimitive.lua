@@ -23,32 +23,20 @@ eprimitive.new = function()
     function self:load()
         super_load(self)
         self:log()
-        self.transform.scale = vector2.new(5,5)
-        self.mesh_comp.filter = mesh.quad
 
-        self.physics.type = "dynamic"
-        self.physics.body = love.physics.newBody(
-            World.physics,
-            self.transform.position.x,
-            self.transform.position.y,
-            self.physics.type
-        )
-        self.physics.shape = love.physics.newRectangleShape(
-            self.transform.scale.x,
-            self.transform.scale.y
-        )
-        self.physics.fixture = love.physics.newFixture(
-            self.physics.body,
-            self.physics.shape
-        )
-        self.mesh_comp.z = 4
+        self.mesh_comp.z = 2
+        self.mesh_comp.filter = mesh.quad
     end
 
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
-        self.transform.position.x = self.physics.body:getX()
-        self.transform.position.y = self.physics.body:getY()
+        self.transform.position = self.transform.position + self.velocity * dt
+    end
+
+    local super_draw = self.draw
+    function self:draw()
+        super_draw(self)
     end
     return self
 end

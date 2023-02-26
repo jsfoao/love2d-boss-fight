@@ -2,6 +2,7 @@ local renderer = {}
 renderer.new = function ()
     local self = {}
     self.world_queue = {}
+    self.world_layer_count = {}
     self.screen_queue = {}
     self.layers = 5
 
@@ -11,6 +12,7 @@ renderer.new = function ()
         -- initiate render z depth layers
         for i = 1, self.layers+1, 1 do
             self.world_queue[i] = {}
+            self.world_layer_count[i] = 0
         end
 
         for i = 1, self.layers+1, 1 do
@@ -20,9 +22,9 @@ renderer.new = function ()
     
     function self:submit(rend)
         if rend.space == WORLD_SPACE then
-            self.world_queue[rend.z+1][#self.world_queue+1] = rend
+            table.insert(self.world_queue[rend.z+1], rend)
         elseif rend.space == SCREEN_SPACE then
-            self.screen_queue[rend.z+1][#self.screen_queue+1] = rend
+            table.insert(self.screen_queue[rend.z+1], rend)
         end
     end
 
@@ -33,18 +35,17 @@ renderer.new = function ()
         
         -- draw world renderables
         for i = 1, self.layers+1, 1 do
-            for k, r in pairs(self.world_queue[i]) do
-                print(r.owner.name)
-                r:draw()
-                table.remove(self.world_queue[i], k)
+            for j = #self.world_queue[i], 1, -1 do
+                self.world_queue[i][j]:render()
+                table.remove(self.world_queue[i], j)
             end
         end
 
-        -- draw screen renderables on top
+        -- draw screen renderables
         for i = 1, self.layers+1, 1 do
-            for k, r in pairs(self.screen_queue[i]) do
-                r:draw()
-                table.remove(self.screen_queue[i], k)
+            for j = #self.screen_queue[i], 1, -1 do
+                self.world_queue[i][j]:render()
+                table.remove(self.screen_queue[i], j)
             end
         end
     end
