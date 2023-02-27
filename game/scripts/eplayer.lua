@@ -2,6 +2,7 @@ require "core.ecs"
 local entity = require("core.ecs.entity")
 local vector2 = require("core.vector2")
 local mesh = require("core.renderer.mesh")
+local collision = require("core.collision.collision")
 
 local cmesh = require("core.components.cmesh")
 local cbox_collider = require("core.components.cbox_collider")
@@ -44,6 +45,26 @@ eplayer.new = function()
     local super_draw = self.draw
     function self:draw()
         super_draw(self)
+
+        if Camera.view_mtx == nil then
+            return
+        end
+
+        local screen_mouse_pos = vector2.new(
+            love.mouse.getX() - love.graphics.getWidth() / 2,
+            love.mouse.getY() - love.graphics.getHeight() / 2
+        )
+
+        local world_mouse_pos = Camera:screen_to_world(screen_mouse_pos)
+        local dir = world_mouse_pos - self.transform.position
+        local hit = {}
+        debug.line(self.transform.position + dir:normalized() * 1, self.transform.position + dir:normalized() * 20, {1,0,0})
+        debug.circle("fill", self.transform.position + dir:normalized() * 1, 10,10,{1,1,1})
+        debug.circle("fill", world_mouse_pos, 10, 10, {1,1,1})
+
+        if collision.raycast(self.transform.position + dir:normalized() * 1, dir, 20, hit, 0) then
+            debug.circle("fill", hit.position, 5, 10, {0,1,0})
+        end
     end
 
     return self

@@ -68,6 +68,14 @@ entity.new = function()
         end
     end
 
+    function self:on_destroy()
+        for k, c in pairs(self.components) do
+            if c.enabled then
+                c:on_destroy()
+            end
+        end
+    end
+
     function self:log()
         print("- ENTITY -")
         print(self.id)

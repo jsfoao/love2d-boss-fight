@@ -7,6 +7,7 @@ ccollider.new = function ()
     self.type_id = ccollider.type_id
     self.name = "CCollider"
     self.layer = 0
+    self.ray_layer = 0
 
     return self
 end

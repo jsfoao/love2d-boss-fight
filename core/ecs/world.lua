@@ -9,6 +9,7 @@ world.new = function ()
     self.fixed_dt = 0.01
     self.curr_fixed_dt = 0
     self.physics_bodies = {}
+    self.colliders = {}
 
     -- entity queues
     self.to_destroy = {}
@@ -43,7 +44,19 @@ world.new = function ()
                 return
             end
         end
-        
+    end
+
+    function self:add_collider(col)
+        table.insert(self.colliders, col)
+    end
+
+    function self:remove_collider(col)
+        for i = 1, #self.colliders, 1 do
+            if col.id == self.colliders[i].id then
+                table.remove(self.colliders, i)
+                return
+            end
+        end
     end
 
     function self:init_game_mode(game_mode_type)
@@ -64,6 +77,7 @@ world.new = function ()
         for i = #self.to_destroy, 1, -1 do
             for j = 1, #self.entities, 1 do
                 if self.to_destroy[i].id == self.entities[j].id then
+                    self.to_destroy[i]:on_destroy()
                     table.remove(self.entities, j)
                     goto continue
                 end

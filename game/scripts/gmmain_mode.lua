@@ -5,6 +5,8 @@ local ecamera = require("core.entities.ecamera")
 local eprimitive = require("core.entities.eprimitive")
 local mesh = require("core.renderer.mesh")
 
+local matrix = require("core.matrix")
+
 local gmmain_mode = {}
 gmmain_mode.new = function ()
     local self = game_mode.new()

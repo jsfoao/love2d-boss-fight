@@ -83,6 +83,11 @@ cbox_collider.new = function ()
         return not (#self.other_colliders == 0)
     end
 
+    local super_load = self.load
+    function self:load()
+        World:add_collider(self)
+    end
+
     local super_update = self.update
     function self:update(dt)
         super_update(self,dt)
@@ -131,6 +136,12 @@ cbox_collider.new = function ()
         if self.debug then
             debug.quad("line", self.position, self.scale, self.rotation, self.debug_color)
         end
+    end
+
+    local super_on_destroy = self.on_destroy
+    function self:on_destroy()
+        super_on_destroy(self)
+        World:remove_collider(self)
     end
     return self
 end

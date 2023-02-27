@@ -12,6 +12,7 @@ object.new = function ()
     function self:update(dt) end
     function self:fixed_update(dt) end
     function self:draw() end
+    function self:on_destroy() end
 
     return self
 end
