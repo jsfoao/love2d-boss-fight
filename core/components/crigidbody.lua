@@ -42,21 +42,45 @@ crigidbody.new = function ()
 
         local col_x = false
         local col_y = false
+
+        local penetration_x = 0
+        local penetration_y = 0
+
         for key, col in pairs(self.collider.other_colliders) do
             if collision.intersect_aabb(col.box, self.box_x) then
                 col_x = true
+                if col.box.x.min <= self.box_x.x.max and col.box.x.max >= self.box_x.x.min then
+                    penetration_x = col.owner.transform.position.x - self.owner.transform.position.x
+                end
             end
             if collision.intersect_aabb(col.box, self.box_y) then
                 col_y = true
+                if col.box.y.min <= self.box_y.y.max and col.box.y.max >= self.box_y.y.min then
+                    penetration_y = col.owner.transform.position.y - self.owner.transform.position.y
+                    -- print(penetration_y)
+                end
             end
         end
 
         if col_x == true then
-            self.velocity = vector2.new(0, self.velocity.x)
+            -- depenetrate on x axis by a factor of 2
+            self.owner.transform.position = vector2.new(
+                self.owner.transform.position.x - penetration_x * 0.01,
+                self.owner.transform.position.y
+            )
+
+            self.velocity = vector2.new(0, self.velocity.y)
         end
 
         if col_y == true then
-            self.velocity = vector2.new(self.velocity.x - self.velocity.x * self.friction * dt, self.velocity.y * 0.4 - self.gravity * self.mass * dt)
+            -- depenetrate on y axis by a factor of 2
+            self.owner.transform.position = vector2.new(
+                self.owner.transform.position.x,
+                self.owner.transform.position.y - penetration_y * 0.01
+            )
+
+            -- count in friction
+            self.velocity = vector2.new(self.velocity.x - self.velocity.x * self.friction * dt, 0)
         else
             -- gravity accel
             self.velocity = vector2.new(self.velocity.x, self.velocity.y + self.gravity * self.mass * dt)

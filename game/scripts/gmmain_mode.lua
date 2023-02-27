@@ -25,12 +25,33 @@ gmmain_mode.new = function ()
         self.cube.box_comp.debug = true
 
         -- platform
-        self.platform = World:create_entity(eprimitive, vector2.new(0,5))
-        self.platform.transform.scale = vector2.new(20,1)
-        self.platform.mesh = mesh.quad
-        self.platform.mesh_comp.color = {1,1,1}
-        self.platform.name = "Platform"
-        self.platform.rb_comp.type = "static"
+        self.platform_b = World:create_entity(eprimitive, vector2.new(0,5))
+        self.platform_b.transform.scale = vector2.new(20,1)
+        self.platform_b.mesh = mesh.quad
+        self.platform_b.mesh_comp.color = {1,1,1}
+        self.platform_b.name = "Platform"
+        self.platform_b.rb_comp.type = "static"
+
+        self.platform_u = World:create_entity(eprimitive, vector2.new(0,-5))
+        self.platform_u.transform.scale = vector2.new(20,1)
+        self.platform_u.mesh = mesh.quad
+        self.platform_u.mesh_comp.color = {1,1,1}
+        self.platform_u.name = "Platform"
+        self.platform_u.rb_comp.type = "static"
+
+        self.platform_l = World:create_entity(eprimitive, vector2.new(-5,0))
+        self.platform_l.transform.scale = vector2.new(1,20)
+        self.platform_l.mesh = mesh.quad
+        self.platform_l.mesh_comp.color = {1,1,1}
+        self.platform_l.name = "Platform"
+        self.platform_l.rb_comp.type = "static"
+
+        self.platform_r = World:create_entity(eprimitive, vector2.new(5,0))
+        self.platform_r.transform.scale = vector2.new(1,20)
+        self.platform_r.mesh = mesh.quad
+        self.platform_r.mesh_comp.color = {1,1,1}
+        self.platform_r.name = "Platform"
+        self.platform_r.rb_comp.type = "static"
         
         -- Player = World:create_entity(eplayer, vector2.new(0,0))
         -- Player.enabled = false

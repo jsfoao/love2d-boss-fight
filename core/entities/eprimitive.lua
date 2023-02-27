@@ -32,6 +32,7 @@ eprimitive.new = function()
 
         self.mesh_comp.z = 2
         self.mesh_comp.filter = mesh.quad
+        self.transform.debug = true
     end
 
     local super_update = self.update
