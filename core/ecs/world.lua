@@ -8,6 +8,7 @@ world.new = function ()
     self.game_mode = nil
     self.fixed_dt = 0.01
     self.curr_fixed_dt = 0
+    self.physics_bodies = {}
 
     -- entity queues
     self.to_destroy = {}
@@ -28,6 +29,21 @@ world.new = function ()
                 table.insert(self.to_destroy, ent)
             end
         end
+    end
+
+    function self:add_physics_body(body)
+        table.insert(self.physics_bodies, body)
+        return body
+    end
+
+    function self:remove_physics_body(body)
+        for i = 1, #self.physics_bodies, 1 do
+            if body.id == self.physics_bodies[i].id then
+                table.remove(self.physics_bodies, i)
+                return
+            end
+        end
+        
     end
 
     function self:init_game_mode(game_mode_type)

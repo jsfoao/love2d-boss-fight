@@ -17,12 +17,12 @@ gmmain_mode.new = function ()
         self.camera = World:create_entity(ecamera, vector2.new(0,0))
         Camera = self.camera.camera_comp
         
+        
         -- cube
         self.cube = World:create_entity(eprimitive, vector2.new(0,2))
         self.cube.mesh = mesh.quad
         self.cube.mesh_comp.color = {0.5,0.5,0.5}
         self.cube.name = "Cube"
-        self.cube.box_comp.debug = true
 
         -- platform
         self.platform_b = World:create_entity(eprimitive, vector2.new(0,5))
@@ -52,9 +52,9 @@ gmmain_mode.new = function ()
         self.platform_r.mesh_comp.color = {1,1,1}
         self.platform_r.name = "Platform"
         self.platform_r.rb_comp.type = "static"
-        
-        -- Player = World:create_entity(eplayer, vector2.new(0,0))
-        -- Player.enabled = false
+
+        Player = World:create_entity(eplayer, vector2.new(0,0))
+
     end
 
     function self:update(dt)
@@ -78,11 +78,6 @@ gmmain_mode.new = function ()
         end
         if love.keyboard.isDown('l') then
             self.camera.z = self.camera.z - (1 * dt)
-        end
-
-        if love.keyboard.isDown('y') then
-            self.cube.transform.position = vector2.new(0,2)
-            self.cube.rb_comp.set_linear_velocity(vector2.new(0,0))
         end
     end
 

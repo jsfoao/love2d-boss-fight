@@ -1,8 +1,11 @@
 require "core.ecs"
 local entity = require("core.ecs.entity")
+local vector2 = require("core.vector2")
+local mesh = require("core.renderer.mesh")
+
 local cmesh = require("core.components.cmesh")
 local cbox_collider = require("core.components.cbox_collider")
-local vector2 = require("core.vector2")
+local crigidbody = require("core.components.crigidbody")
 
 local eplayer = Type_registry.create_entity_type("EPlayer")
 eplayer.new = function()
@@ -13,38 +16,36 @@ eplayer.new = function()
     -- components
     self.mesh_comp = self:add_component(cmesh)
     self.box_comp = self:add_component(cbox_collider)
+    self.rb_comp = self:add_component(crigidbody)
 
     local super_load = self.load
     function self:load()
         super_load(self)
-        self.box_comp.scale = vector2.new(2,2)
-        self.mesh_comp.z = 1
-        self.mesh_comp.color = {0,0,1}
+        self.rb_comp:init(self.box_comp)
+        self.mesh_comp.filter = mesh.quad
+        self.mesh_comp.color = {0,1,0}
     end
 
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
-        if love.keyboard.isDown('up') then
-            self.transform.position.y = self.transform.position.y - 2 * dt
+        local speed = 10
+        if Input.get_key_hold(Key.A) then
+            self.rb_comp:add_velocity(vector2.new(-speed * dt), 0)
         end
-        if love.keyboard.isDown('down') then
-            self.transform.position.y = self.transform.position.y + 2 * dt
+        if Input.get_key_hold(Key.D) then
+            self.rb_comp:add_velocity(vector2.new(speed * dt), 0)
         end
-        if love.keyboard.isDown('left') then
-            self.transform.position.x = self.transform.position.x - 2 * dt
+        if Input.get_key_hold(Key.Space) then
+            self.rb_comp:add_velocity(vector2.new(0, -20 * dt))
         end
-        if love.keyboard.isDown('right') then
-            self.transform.position.x = self.transform.position.x + 2 * dt
-        end
-        
-        self.transform.rotation = self.transform.rotation + 45 * dt
     end
 
     local super_draw = self.draw
     function self:draw()
         super_draw(self)
     end
+
     return self
 end
 

@@ -105,9 +105,11 @@ cbox_collider.new = function ()
         local colliders = {}
         for key, e in pairs(World.entities) do
             if e.enabled == true and not (e.id == self.owner.id) then
-                if e:has_component(cbox_collider) then
+                if e:has_component(cbox_collider)then
                     local col = e:get_component(cbox_collider)
-                    table.insert(colliders, col)
+                    if col.layer == self.layer then
+                        table.insert(colliders, col)
+                    end
                 end
             end
         end
@@ -126,7 +128,9 @@ cbox_collider.new = function ()
     local super_draw = self.draw
     function self:draw()
         super_draw(self)
-        debug.quad("line", self.position, self.scale, self.rotation, self.debug_color)
+        if self.debug then
+            debug.quad("line", self.position, self.scale, self.rotation, self.debug_color)
+        end
     end
     return self
 end

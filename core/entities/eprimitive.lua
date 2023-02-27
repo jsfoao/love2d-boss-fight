@@ -24,38 +24,8 @@ eprimitive.new = function()
     local super_load = self.load
     function self:load()
         super_load(self)
-        self:log()
         self.rb_comp:init(self.box_comp)
-
-        self.box_comp.on_collision_enter_callback = self.on_collision_enter
-
-        self.mesh_comp.z = 2
         self.mesh_comp.filter = mesh.quad
-        self.transform.debug = true
-    end
-
-    local super_update = self.update
-    function self:update(dt)
-        super_update(self, dt)
-
-        local speed = 10
-        if Input.get_key_hold(Key.A) then
-            self.rb_comp:add_velocity(vector2.new(-speed * dt), 0)
-        end
-        if Input.get_key_hold(Key.D) then
-            self.rb_comp:add_velocity(vector2.new(speed * dt), 0)
-        end
-        if Input.get_key_hold(Key.Space) then
-            self.rb_comp:add_velocity(vector2.new(0, -20 * dt))
-        end
-    end
-
-    local super_draw = self.draw
-    function self:draw()
-        super_draw(self)
-    end
-
-    function self:on_collision_enter(self, other)
     end
 
     return self
