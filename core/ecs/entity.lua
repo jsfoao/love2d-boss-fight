@@ -8,6 +8,7 @@ entity.new = function()
     self.world = nil
     self.components = {}
     self.enabled = true
+    self.is_loaded = false
 
     function self:add_component(component_type)
         assert(Type_registry.is_valid_component(component_type))
@@ -37,6 +38,7 @@ entity.new = function()
     end
 
     function self:load()
+        self.is_loaded = true
         for k, c in pairs(self.components) do
             c:load()
         end

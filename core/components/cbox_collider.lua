@@ -11,7 +11,7 @@ cbox_collider.new = function ()
 
     self.box = {
         x = { min = 0, max = 0},
-        y = { min = 0, max = 0}
+        y = { min = 0, max = 0},
     }
     self.position = vector2.zero
     self.rotation = 0
@@ -29,21 +29,20 @@ cbox_collider.new = function ()
     self.debug = false
 
     function self:on_collision_enter(other)
-        print(#self.other_colliders)
         if not (self.on_collision_enter_callback == nil) then
-            self:on_collision_callback(other)
+            self.on_collision_enter_callback(self, other)
         end
     end
 
     function self:on_collision_stay(other)
         if not (self.on_collision_stay_callback == nil) then
-            self:on_collision_stay(other)
+            self.on_collision_stay_callback(self, other)
         end
     end
 
     function self:on_collision_exit(other)
         if not (self.on_collision_exit_callback == nil) then
-            self:on_collision_exit(other)
+            self.on_collision_exit_callback(self, other)
         end
     end
 
@@ -70,8 +69,14 @@ cbox_collider.new = function ()
         end
     end
 
-    function self:sweep(direction)
-        self.position = self.position + direction
+    function self:offset_box(direction, scale)
+        local tscale = vector2.new(self.scale.x * scale.x, self.scale.y * scale.y)
+        local hscale = tscale / 2
+        local box = {
+            x = { min = self.position.x - hscale.x, max = self.position.x + hscale.x },
+            y = { min = self.position.y - hscale.y, max = self.position.y + hscale.y }
+        }
+        return box
     end
 
     function self:is_colliding()

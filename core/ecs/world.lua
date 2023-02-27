@@ -7,14 +7,26 @@ world.new = function ()
     self.entities = {}
     self.game_mode = nil
     self.physics = nil
+
+    -- entity queues
+    self.to_destroy = {}
+    self.to_load = {}
     
     function self:create_entity(entity_type, position)
         assert(Type_registry.is_valid_entity(entity_type))
-        local _entity = entity_type.new()
-        self.entities[#self.entities+1] = _entity
-        _entity.world = self
-        _entity.transform.position = position
-        return _entity
+        local ent = entity_type.new()
+        ent.world = self
+        ent.transform.position = position
+        table.insert(self.to_load, ent)
+        return ent
+    end
+
+    function self:destroy_entity(ent)
+        for i = 1, #self.entities, 1 do
+            if ent.id == self.entities[i].id then
+                table.insert(self.to_destroy, ent)
+            end
+        end
     end
 
     function self:init_game_mode(game_mode_type)
@@ -25,13 +37,32 @@ world.new = function ()
     end
 
     function self:load()
+        -- entities only get loaded once, either on world load or on their creation
         self.game_mode:load()
-        for k, e in pairs(self.entities) do
-            e:load()
-        end
     end
 
     function self:update(dt)
+        -- destroy queue
+        for i = #self.to_destroy, 1, -1 do
+            for j = 1, #self.entities, 1 do
+                if self.to_destroy[i].id == self.entities[j].id then
+                    table.remove(self.entities, j)
+                    goto continue
+                end
+            end
+            ::continue::
+            table.remove(self.to_destroy, i)
+        end
+
+        -- load queue
+        for i = #self.to_load, 1, -1 do
+            if self.to_load[i].is_loaded == false then
+                table.insert(self.entities, self.to_load[i])
+                self.to_load[i]:load()
+            end
+            table.remove(self.to_load, i)
+        end
+
         self.game_mode:update(dt)
         for k, e in pairs(self.entities) do
             if e.enabled == true then

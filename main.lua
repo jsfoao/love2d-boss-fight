@@ -22,6 +22,7 @@ end
 
 
 function love.update(dt)
+    Input.update()
     World:update(dt)
 end
 

@@ -35,34 +35,63 @@ Key = {
     _7 = '7',
     _8 = '8',
     _9 = '9',
+    Up = 'up',
+    Right = 'right',
+    Down = 'down',
+    Left = 'left',
+    Space = 'space'
+}
+
+State = {
+    none = 0,
+    down = 1,
+    hold = 2,
+    up = 3
 }
 
 Input = {
-    keys = {}
+    keys = {},
+    state = {}
 }
 
 function Input.init()
     for k, v in pairs(Key) do
         Input.keys[v] = false
+        Input.state[v] = State.none
+    end
+end
+
+function Input.update()
+    for k, v in pairs(Key) do
+        if love.keyboard.isDown(v) == true then
+            -- key down
+            if Input.keys[v] == false then
+                Input.keys[v] = true
+                Input.state[v] = State.down
+            -- key hold
+            elseif Input.keys[v] == true then
+                Input.keys[v] = true
+                Input.state[v] = State.hold
+            end
+        --key up
+        elseif love.keyboard.isDown(v) == false and Input.keys[v] == true then
+            Input.keys[v] = false
+            Input.state[v] = State.up
+        -- key none
+        elseif love.keyboard.isDown(v) == false and Input.keys[v] == false then
+            Input.state[v] = State.none
+        end
     end
 end
 
 function Input.get_key_down(key)
-    local c = Input.keys[key] == false and love.keyboard.isDown(key)
-    if c == true then
-        Input.keys[key] = true
-    end
-    return c
+    return Input.state[key] == State.down
 end
 
 function Input.get_key_up(key)
-    local c = Input.keys[key] == true and not love.keyboard.isDown(key)
-    if c == true then
-        Input.keys[key] = false
-    end
-    return c
+    return Input.state[key] == State.up
 end
 
 function Input.get_key_hold(key)
-    return Input.keys[key] == true
+    return Input.state[key] == State.hold
 end
