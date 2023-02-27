@@ -15,6 +15,8 @@ crigidbody.new = function ()
     self.velocity = vector2.zero
     self.box_x = {}
     self.box_y = {}
+    self.col_x = false
+    self.col_y = false
 
     -- requires collider
     self.collider = nil
@@ -37,48 +39,10 @@ crigidbody.new = function ()
     end
 
     function self:dynamic_behaviour(dt)
-        self.box_x = self.collider:offset_box(vector2.new(self.velocity.x * dt, 0), vector2.new(1, 0.8))
-        self.box_y = self.collider:offset_box(vector2.new(0, self.velocity.y * dt), vector2.new(0.8, 1))
-
-        local col_x = false
-        local col_y = false
-
-        local penetration_x = 0
-        local penetration_y = 0
-
-        for key, col in pairs(self.collider.other_colliders) do
-            if collision.intersect_aabb(col.box, self.box_x) then
-                col_x = true
-                if col.box.x.min <= self.box_x.x.max and col.box.x.max >= self.box_x.x.min then
-                    penetration_x = col.owner.transform.position.x - self.owner.transform.position.x
-                end
-            end
-            if collision.intersect_aabb(col.box, self.box_y) then
-                col_y = true
-                if col.box.y.min <= self.box_y.y.max and col.box.y.max >= self.box_y.y.min then
-                    penetration_y = col.owner.transform.position.y - self.owner.transform.position.y
-                    -- print(penetration_y)
-                end
-            end
+        if self.col_x == true then
+            
         end
-
-        if col_x == true then
-            -- depenetrate on x axis by a factor of 2
-            self.owner.transform.position = vector2.new(
-                self.owner.transform.position.x - penetration_x * 0.01,
-                self.owner.transform.position.y
-            )
-
-            self.velocity = vector2.new(0, self.velocity.y)
-        end
-
-        if col_y == true then
-            -- depenetrate on y axis by a factor of 2
-            self.owner.transform.position = vector2.new(
-                self.owner.transform.position.x,
-                self.owner.transform.position.y - penetration_y * 0.01
-            )
-
+        if self.col_y == true then
             -- count in friction
             self.velocity = vector2.new(self.velocity.x - self.velocity.x * self.friction * dt, 0)
         else
@@ -89,7 +53,50 @@ crigidbody.new = function ()
         self.owner.transform.position = self.owner.transform.position + self.velocity * dt
     end
 
+
     local super_update = self.update
+    function self:update(dt)
+        if self.type == "static" then
+            return
+        end
+        self.col_x = false
+        self.col_y = false
+
+        self.box_x = self.collider:offset_box(vector2.new(self.velocity.x * dt, 0), vector2.new(1, 0.7))
+        self.box_y = self.collider:offset_box(vector2.new(0, self.velocity.y * dt), vector2.new(0.7, 1))
+
+        for key, col in pairs(self.collider.other_colliders) do
+            if collision.intersect_aabb(col.box, self.box_x) then
+                self.col_x = true
+                if col.box.x.min <= self.box_x.x.max and col.box.x.max >= self.box_x.x.min then
+                    local penetration_x = col.owner.transform.position.x - self.owner.transform.position.x
+
+                    -- depenetrate on x axis by a factor of 2
+                    self.owner.transform.position = vector2.new(
+                        self.owner.transform.position.x - penetration_x * 0.01,
+                        self.owner.transform.position.y
+                    )
+
+                    self.velocity = vector2.new(0, self.velocity.y)
+                end
+            end
+            if collision.intersect_aabb(col.box, self.box_y) then
+                self.col_y = true
+                if col.box.y.min <= self.box_y.y.max and col.box.y.max >= self.box_y.y.min then
+                    local penetration_y = col.owner.transform.position.y - self.owner.transform.position.y
+                    
+                    -- depenetrate on x axis by a factor of 2
+                    self.owner.transform.position = vector2.new(
+                        self.owner.transform.position.x,
+                        self.owner.transform.position.y - penetration_y * 0.01
+                    )
+
+                    self.velocity = vector2.new(self.velocity.x, 0)
+                end
+            end
+        end
+    end
+
     function self:fixed_update(dt)
         if self.type == "dynamic" then
             self:dynamic_behaviour(dt)
