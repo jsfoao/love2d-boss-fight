@@ -21,7 +21,6 @@ eprimitive.new = function()
     self.rb_comp = self:add_component(crigidbody)
 
 
-
     local super_load = self.load
     function self:load()
         super_load(self)

@@ -22,7 +22,7 @@ crigidbody.new = function ()
     -- physics material
     self.friction = 1.5
     self.mass = 1
-    self.gravity = 8
+    self.gravity = 15
 
     function self:set_linear_velocity(vec)
         self.velocity = vec
@@ -90,7 +90,7 @@ crigidbody.new = function ()
     end
 
     local super_update = self.update
-    function self:update(dt)
+    function self:fixed_update(dt)
         if self.type == "dynamic" then
             self:dynamic_behaviour(dt)
         end

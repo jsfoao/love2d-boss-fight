@@ -6,7 +6,8 @@ world.new = function ()
     local self = object.new()
     self.entities = {}
     self.game_mode = nil
-    self.physics = nil
+    self.fixed_dt = 0.01
+    self.curr_fixed_dt = 0
 
     -- entity queues
     self.to_destroy = {}
@@ -42,6 +43,7 @@ world.new = function ()
     end
 
     function self:update(dt)
+        -- INITIALIZATION
         -- destroy queue
         for i = #self.to_destroy, 1, -1 do
             for j = 1, #self.entities, 1 do
@@ -63,10 +65,26 @@ world.new = function ()
             table.remove(self.to_load, i)
         end
 
+        -- PHYSICS
+        self.curr_fixed_dt = self.curr_fixed_dt + dt
+        if self.curr_fixed_dt >= self.fixed_dt then
+            self:fixed_update(self.fixed_dt)
+            self.curr_fixed_dt = 0
+        end
+
+        -- GAME LOGIC
         self.game_mode:update(dt)
         for k, e in pairs(self.entities) do
             if e.enabled == true then
                 e:update(dt)
+            end
+        end
+    end
+
+    function self:fixed_update(dt)
+        for k, e in pairs(self.entities) do
+            if e.enabled == true then
+                e:fixed_update(dt)
             end
         end
     end

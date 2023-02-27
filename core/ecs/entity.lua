@@ -52,6 +52,14 @@ entity.new = function()
         end
     end
 
+    function self:fixed_update(dt)
+        for k, c in pairs(self.components) do
+            if c.enabled == true then
+                c:fixed_update(dt)
+            end
+        end
+    end
+
     function self:draw()
         for k, c in pairs(self.components) do
             if c.enabled then
