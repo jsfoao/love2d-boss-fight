@@ -1,4 +1,5 @@
 local vector2 = require("core.vector2")
+require "core.collision.collision_layers"
 
 local collision = {}
 function collision.point_inside_aabb(point, aabb)
@@ -37,19 +38,29 @@ function collision.intersect_aabb_circle(aabb, circle)
     return dist < circle.radius
 end
 
-function collision.raycast(from, dir, length, out_hit, layer)
+function collision.raycast(from, dir, length, out_hit, layer, debugging)
     local norm_dir = dir:normalized()
     -- ray segments
     local gap = 0.1
     local temp = norm_dir * length
     local dist = temp:len()
     local segments = dist / gap
+
+    if debugging == true then
+        debug.line(from, from + norm_dir * length, {1,0,0})
+    end
+
     for i = 1, segments, 1 do
         local point = from + (norm_dir * i * gap)
         for key, col in pairs(World.colliders) do
-            if collision.point_inside_aabb(point, col.box) and col.ray_layer == layer then
+            if collision.point_inside_aabb(point, col.box) and col:has_ray_layer(layer) then
                 out_hit.blocking = true
                 out_hit.position = point
+                out_hit.object = col.owner
+
+                if debugging == true then
+                    debug.circle("fill", out_hit.position, 5, 10, {0,1,0})
+                end
                 return true
             end
         end

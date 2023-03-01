@@ -43,6 +43,12 @@ Key = {
     Space = 'space'
 }
 
+Mouse = {
+    Left = 1,
+    Right = 2,
+    Middle = 3
+}
+
 State = {
     none = 0,
     down = 1,
@@ -52,49 +58,93 @@ State = {
 
 Input = {
     keys = {},
-    state = {}
+    key_state = {},
+    mouse = {},
+    mouse_state = {}
 }
 
 function Input.init()
+    -- init keyboard keys
     for k, v in pairs(Key) do
         Input.keys[v] = false
-        Input.state[v] = State.none
+        Input.key_state[v] = State.none
+    end
+
+    -- init mouse keys
+    for k, v in pairs(Mouse) do
+        Input.mouse[v] = false
+        Input.mouse_state[v] = State.none
     end
 end
 
 function Input.update()
+    -- iterate keyboard 
     for k, v in pairs(Key) do
         if love.keyboard.isDown(v) == true then
             -- key down
             if Input.keys[v] == false then
                 Input.keys[v] = true
-                Input.state[v] = State.down
+                Input.key_state[v] = State.down
             -- key hold
             elseif Input.keys[v] == true then
                 Input.keys[v] = true
-                Input.state[v] = State.hold
+                Input.key_state[v] = State.hold
             end
         --key up
         elseif love.keyboard.isDown(v) == false and Input.keys[v] == true then
             Input.keys[v] = false
-            Input.state[v] = State.up
+            Input.key_state[v] = State.up
         -- key none
         elseif love.keyboard.isDown(v) == false and Input.keys[v] == false then
-            Input.state[v] = State.none
+            Input.key_state[v] = State.none
+        end
+    end
+
+    -- iterate mouse
+    for k, v in pairs(Mouse) do
+        if love.mouse.isDown(v) == true then
+            -- key down
+            if Input.mouse[v] == false then
+                Input.mouse[v] = true
+                Input.mouse_state[v] = State.down
+            -- key hold
+            elseif Input.mouse[v] == true then
+                Input.mouse[v] = true
+                Input.mouse_state[v] = State.hold
+            end
+        --key up
+        elseif love.mouse.isDown(v) == false and Input.mouse[v] == true then
+            Input.mouse[v] = false
+            Input.mouse_state[v] = State.up
+        -- key none
+        elseif love.mouse.isDown(v) == false and Input.mouse[v] == false then
+            Input.mouse_state[v] = State.none
         end
     end
 end
 
 function Input.get_key_down(key)
-    return Input.state[key] == State.down
+    return Input.key_state[key] == State.down
 end
 
 function Input.get_key_up(key)
-    return Input.state[key] == State.up
+    return Input.key_state[key] == State.up
 end
 
 function Input.get_key_hold(key)
-    return Input.state[key] == State.hold
+    return Input.key_state[key] == State.hold
+end
+
+function Input.get_mouse_down(key)
+    return Input.mouse_state[key] == State.down
+end
+
+function Input.get_mouse_up(key)
+    return Input.mouse_state[key] == State.up
+end
+
+function Input.get_mouse_hold(key)
+    return Input.mouse_state[key] == State.hold
 end
 
 function Input.get_mouse_world()

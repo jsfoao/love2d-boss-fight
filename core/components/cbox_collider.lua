@@ -85,6 +85,7 @@ cbox_collider.new = function ()
 
     local super_load = self.load
     function self:load()
+        super_load(self)
         World:add_collider(self)
     end
 
@@ -112,7 +113,7 @@ cbox_collider.new = function ()
             if e.enabled == true and not (e.id == self.owner.id) then
                 if e:has_component(cbox_collider)then
                     local col = e:get_component(cbox_collider)
-                    if col.layer == self.layer then
+                    if col:has_layer(self.layer) == true then
                         table.insert(colliders, col)
                     end
                 end

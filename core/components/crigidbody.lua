@@ -15,13 +15,14 @@ crigidbody.new = function ()
     self.velocity = vector2.zero
     self.box_x = {}
     self.box_y = {}
+
+    self.penetration_x = 0
+    self.penetration_y = 0
     self.sweep_x = false
     self.sweep_y = false
-
-
     self.contact_x = false
     self.contact_y = false
-    self.sweep_buffer_time = 0.3
+    self.sweep_buffer_time = 0.25
     self.sweep_buffer_x = 0
     self.sweep_buffer_y = 0
 
@@ -32,17 +33,17 @@ crigidbody.new = function ()
     self.collider = nil
 
     -- physics material
-    self.air_friction = 2
-    self.friction = 0.1
+    self.air_friction = 3
+    self.friction = 8
     self.mass = 1
-    self.gravity = 15
+    self.gravity = 9.8
 
     function self:set_linear_velocity(vec)
         self.velocity = vec
     end
 
     function self:add_velocity(vec)
-        self.velocity = self.velocity + vec
+        self.velocity = self.velocity + vec * 0.01
     end
 
     function self:init(col)
@@ -54,21 +55,22 @@ crigidbody.new = function ()
         if self.sweep_x == true then
             
         end
-        if self.sweep_y then
+
+        if self.sweep_y == true then
             -- count in friction
             self.velocity = vector2.new(
-                self.velocity.x - self.velocity.x * self.friction * dt,
+                self.velocity.x - self.velocity.x * self.friction * 0.01,
                 0
             )
         else
             -- gravity accel
             self.velocity = vector2.new(
-                self.velocity.x - self.velocity.x * self.air_friction * dt,
-                self.velocity.y + self.gravity * self.mass * dt
+                self.velocity.x - self.velocity.x * self.air_friction * 0.01,
+                self.velocity.y + self.gravity * self.mass * 0.01
             )
         end
 
-        self.owner.transform.position = self.owner.transform.position + self.velocity * dt
+        self.owner.transform.position = self.owner.transform.position + self.velocity * 0.01
     end
 
     local super_load = self.load
@@ -114,12 +116,13 @@ crigidbody.new = function ()
                 self.sweep_x = true
                 self.contact_x = true
                 self.sweep_buffer_x = self.sweep_buffer_time
+                
                 if rb.collider.box.x.min <= self.box_x.x.max and rb.collider.box.x.max >= self.box_x.x.min then
-                    local penetration_x = rb.collider.owner.transform.position.x - self.owner.transform.position.x
+                    self.penetration_x = rb.collider.owner.transform.position.x - self.owner.transform.position.x
 
                     -- depenetrate on x axis by a factor of 2
                     self.owner.transform.position = vector2.new(
-                        self.owner.transform.position.x - penetration_x * 0.01,
+                        self.owner.transform.position.x - self.penetration_x * 0.01,
                         self.owner.transform.position.y
                     )
 
@@ -141,12 +144,12 @@ crigidbody.new = function ()
                 self.sweep_buffer_y = self.sweep_buffer_time
 
                 if rb.collider.box.y.min <= self.box_y.y.max and rb.collider.box.y.max >= self.box_y.y.min then
-                    local penetration_y = rb.collider.owner.transform.position.y - self.owner.transform.position.y
+                    self.penetration_y = rb.collider.owner.transform.position.y - self.owner.transform.position.y
                     
                     -- depenetrate on x axis by a factor of 2
                     self.owner.transform.position = vector2.new(
                         self.owner.transform.position.x,
-                        self.owner.transform.position.y - penetration_y * 0.01
+                        self.owner.transform.position.y - self.penetration_y * 0.01
                     )
 
                     if rb.type == "static" then
