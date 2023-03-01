@@ -1,11 +1,12 @@
 local game_mode = require("core.ecs.game_mode")
 local vector2 = require("core.vector2")
-local eplayer = require("game.scripts.entities.eplayer")
-local ecamera = require("core.entities.ecamera")
-local eprimitive = require("core.entities.eprimitive")
+local matrix = require("core.matrix")
 local mesh = require("core.renderer.mesh")
 
-local matrix = require("core.matrix")
+local eprimitive = require("core.entities.eprimitive")
+local ecamera = require("core.entities.ecamera")
+local eplayer = require("game.scripts.entities.eplayer")
+local eenemy = require("game.scripts.entities.eenemy")
 
 local gmmain_mode = {}
 gmmain_mode.new = function ()
@@ -18,7 +19,7 @@ gmmain_mode.new = function ()
         self.camera = World:create_entity(ecamera, vector2.new(0,0))
         Camera = self.camera.camera_comp
 
-        -- platform
+        -- PLATFORMS
         self.platform_b = World:create_entity(eprimitive, vector2.new(0,5))
         self.platform_b.transform.scale = vector2.new(20,1)
         self.platform_b.mesh = mesh.quad
@@ -47,7 +48,12 @@ gmmain_mode.new = function ()
         self.platform_r.name = "PlatformR"
         self.platform_r.rb_comp.type = "static"
 
+        -- PLAYER
         Player = World:create_entity(eplayer, vector2.new(0,0))
+
+
+        -- ENEMY
+        local enemy = World:create_entity(eenemy, vector2.new(2,0))
 
     end
 

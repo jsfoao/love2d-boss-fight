@@ -7,6 +7,7 @@ local collision = require("core.collision.collision")
 local cmesh = require("core.components.cmesh")
 local cbox_collider = require("core.components.cbox_collider")
 local crigidbody = require("core.components.crigidbody")
+local chealth = require("game.scripts.components.chealth")
 
 local eprimitive = require("core.entities.eprimitive")
 
@@ -20,6 +21,7 @@ eplayer.new = function()
     self.mesh_comp = self:add_component(cmesh)
     self.box_comp = self:add_component(cbox_collider)
     self.rb_comp = self:add_component(crigidbody)
+    self.health_comp = self:add_component(chealth)
 
     self.input = {
         movement = 0,
@@ -60,6 +62,7 @@ eplayer.new = function()
     self.crosshair_pos = vector2.zero
     self.aim_dir = vector2.zero
     self.recoil = 10
+    self.hit = {}
     
     local super_load = self.load
     function self:load()
@@ -79,6 +82,7 @@ eplayer.new = function()
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
+        print(self.health_comp.health)
         self.is_grounded = self:ground_check()
         self:handle_input()
         self:handle_jump(dt)
@@ -138,6 +142,8 @@ eplayer.new = function()
                 self.rb_comp.velocity.x + jump_velocity.x,
                 jump_velocity.y
             )
+
+            self.health_comp:damage(10)
         end
     end
 
@@ -157,20 +163,16 @@ eplayer.new = function()
         -- recoil
         local recoil_velocity = -self.aim_dir * self.recoil
         self.rb_comp.velocity = self.rb_comp.velocity * 0.2 + recoil_velocity
-        local hit = {}
         collision.raycast(
             self.hand_pos,
             self.aim_dir,
             20,
-            hit,
+            self.hit,
             RayLayer.world,
             false
         )
 
         -- World:create_entity(eprimitive, self.)
-
-        if hit.blocking then
-        end
     end
 
     function self:dash()
@@ -249,6 +251,18 @@ eplayer.new = function()
         -- jump
         if self.ground_check() then
             debug.line(self.transform.position, self.transform.position + self.jump_normal * 1, {0,0,1})
+        end
+
+        collision.raycast(
+            self.hand_pos,
+            self.aim_dir,
+            20,
+            self.hit,
+            RayLayer.world,
+            true
+        )
+
+        if self.hit.blocking then
         end
     end
 

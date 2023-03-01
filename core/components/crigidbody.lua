@@ -33,8 +33,8 @@ crigidbody.new = function ()
     self.collider = nil
 
     -- physics material
-    self.air_friction = 3
-    self.friction = 8
+    self.air_friction = 2
+    self.friction = 2
     self.mass = 1
     self.gravity = 9.8
 
@@ -149,7 +149,7 @@ crigidbody.new = function ()
                     -- depenetrate on x axis by a factor of 2
                     self.owner.transform.position = vector2.new(
                         self.owner.transform.position.x,
-                        self.owner.transform.position.y - self.penetration_y * 0.013
+                        self.owner.transform.position.y - self.penetration_y * 0.008
                     )
 
                     if rb.type == "static" then
