@@ -40,7 +40,8 @@ Key = {
     Right = 'right',
     Down = 'down',
     Left = 'left',
-    Space = 'space'
+    Space = 'space',
+    LShift = 'lshift'
 }
 
 Mouse = {

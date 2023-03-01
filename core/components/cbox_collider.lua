@@ -73,8 +73,8 @@ cbox_collider.new = function ()
         local tscale = vector2.new(self.scale.x * scale.x, self.scale.y * scale.y)
         local hscale = tscale / 2
         local box = {
-            x = { min = self.position.x - hscale.x, max = self.position.x + hscale.x },
-            y = { min = self.position.y - hscale.y, max = self.position.y + hscale.y }
+            x = { min = self.position.x - hscale.x + direction.x, max = self.position.x + hscale.x + direction.x },
+            y = { min = self.position.y - hscale.y + direction.y, max = self.position.y + hscale.y + direction.y }
         }
         return box
     end

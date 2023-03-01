@@ -21,7 +21,7 @@ function love.load()
     Input.init()
 end
 
-local fixed_dt = 0.0018
+local fixed_dt = 0.01
 local fixed_dt_timer = 0
 
 function love.update(dt)
