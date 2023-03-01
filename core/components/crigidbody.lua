@@ -22,8 +22,11 @@ crigidbody.new = function ()
     self.contact_x = false
     self.contact_y = false
     self.sweep_buffer_time = 0.3
-    self.sweep_buffer_x = self.sweep_buffer_time
-    self.sweep_buffer_y = self.sweep_buffer_time
+    self.sweep_buffer_x = 0
+    self.sweep_buffer_y = 0
+
+    self.updating = false
+    self.update_timer = 0.2
 
     -- requires collider
     self.collider = nil
@@ -51,7 +54,7 @@ crigidbody.new = function ()
         if self.sweep_x == true then
             
         end
-        if self.contact_y then
+        if self.sweep_y then
             -- count in friction
             self.velocity = vector2.new(
                 self.velocity.x - self.velocity.x * self.friction * dt,
@@ -71,11 +74,23 @@ crigidbody.new = function ()
     local super_load = self.load
     function self:load()
         super_load(self)
+        self.contact_x = false
+        self.contact_y = false
+        self.sweep_buffer_x = 0
+        self.sweep_buffer_y = 0
     end
 
 
     local super_update = self.update
     function self:update(dt)
+        if self.updating == false then
+            self.update_timer = self.update_timer - dt
+            if self.update_timer > 0 then
+                return
+            end
+            self.updating = true
+        end
+
         if self.type == "static" then
             return
         end

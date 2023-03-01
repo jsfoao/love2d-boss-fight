@@ -45,17 +45,9 @@ eplayer.new = function()
     local super_draw = self.draw
     function self:draw()
         super_draw(self)
-
-        if Camera.view_mtx == nil then
-            return
-        end
-
-        local screen_mouse_pos = vector2.new(
-            love.mouse.getX() - love.graphics.getWidth() / 2,
-            love.mouse.getY() - love.graphics.getHeight() / 2
-        )
-
-        local world_mouse_pos = Camera:screen_to_world(screen_mouse_pos)
+        
+        local is_grounded = self.rb_comp.contact_y
+        local world_mouse_pos = Input.get_mouse_world()
         local dir = world_mouse_pos - self.transform.position
         local hit = {}
         debug.line(self.transform.position + dir:normalized() * 1, self.transform.position + dir:normalized() * 20, {1,0,0})

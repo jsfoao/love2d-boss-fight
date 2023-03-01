@@ -1,3 +1,4 @@
+local vector2 = require("core.vector2")
 Key = {
     A = 'a',
     B = 'b',
@@ -94,4 +95,18 @@ end
 
 function Input.get_key_hold(key)
     return Input.state[key] == State.hold
+end
+
+function Input.get_mouse_world()
+    if Camera.view_mtx == nil then
+        return vector2.zero
+    end
+
+    local screen_mouse_pos = vector2.new(
+        love.mouse.getX() - love.graphics.getWidth() / 2,
+        love.mouse.getY() - love.graphics.getHeight() / 2
+    )
+
+    local world_mouse_pos = Camera:screen_to_world(screen_mouse_pos)
+    return world_mouse_pos
 end

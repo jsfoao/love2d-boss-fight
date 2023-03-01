@@ -18,13 +18,6 @@ gmmain_mode.new = function ()
     function self:load()
         self.camera = World:create_entity(ecamera, vector2.new(0,0))
         Camera = self.camera.camera_comp
-        
-        
-        -- cube
-        self.cube = World:create_entity(eprimitive, vector2.new(0,2))
-        self.cube.mesh = mesh.quad
-        self.cube.mesh_comp.color = {0.5,0.5,0.5}
-        self.cube.name = "Cube"
 
         -- platform
         self.platform_b = World:create_entity(eprimitive, vector2.new(0,5))
