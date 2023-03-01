@@ -1,6 +1,7 @@
 require "core.ecs"
 local object = require("core.ecs.object")
 local transform = require("core.components.ctransform")
+local crigidbody = require("core.components.crigidbody")
 
 local entity = {}
 entity.new = function()

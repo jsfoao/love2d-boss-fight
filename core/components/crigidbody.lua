@@ -149,7 +149,7 @@ crigidbody.new = function ()
                     -- depenetrate on x axis by a factor of 2
                     self.owner.transform.position = vector2.new(
                         self.owner.transform.position.x,
-                        self.owner.transform.position.y - self.penetration_y * 0.01
+                        self.owner.transform.position.y - self.penetration_y * 0.013
                     )
 
                     if rb.type == "static" then

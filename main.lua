@@ -7,6 +7,7 @@ local renderable = require("core.renderer.renderable")
 local mesh = require("core.renderer.mesh")
 require "core.debug"
 
+
 function love.load()
     World = world.new()
     World:init_game_mode(main_mode)
@@ -20,9 +21,19 @@ function love.load()
     Input.init()
 end
 
+local fixed_dt = 0.0018
+local fixed_dt_timer = 0
 
 function love.update(dt)
+    -- PHYSICS
+    fixed_dt_timer = fixed_dt_timer + dt
+    if fixed_dt_timer >= fixed_dt then
+        World:fixed_update(fixed_dt)
+        fixed_dt_timer = 0
+    end
+    -- INPUT
     Input.update()
+    -- GAME LOGIC
     World:update(dt)
 end
 

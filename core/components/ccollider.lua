@@ -37,6 +37,16 @@ ccollider.new = function ()
         end
     end
 
+    function self:set_only_layer_enable(layer, enable)
+        for k, v in pairs(self.layer_matrix) do
+            if v.id == layer.id then
+                v.enable = enable
+            else
+                v.enable = not enable
+            end
+        end
+    end
+
     function self:set_ray_layer_enable(layer, enable)
         for k, v in pairs(self.ray_layer_matrix) do
             if v.id == layer.id then
@@ -48,24 +58,26 @@ ccollider.new = function ()
 
     function self:has_layer(layer)
         for k, v in pairs(self.layer_matrix) do
-            if v.id == layer.id and v.enable == true then
-                return true
+            if v.id == layer.id then
+                return v.enable
             end
         end
-        return false
     end
 
     function self:has_ray_layer(layer)
         for k, v in pairs(self.ray_layer_matrix) do
-            if v.id == layer.id and v.enable == true then
-                return true
+            if v.id == layer.id then
+                return v.enable
             end
         end
-        return false
     end
 
     function self:log_layers()
-        print("RayLayer")
+        print("-- CollisionLayer --")
+        for k, v in pairs(self.layer_matrix) do
+            print(string.format("%s (%s): %s", v.name, v.id, v.enable))
+        end
+        print("-- RayLayer --")
         for k, v in pairs(self.ray_layer_matrix) do
             print(string.format("%s (%s): %s", v.name, v.id, v.enable))
         end
