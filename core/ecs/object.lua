@@ -14,6 +14,9 @@ object.new = function ()
     function self:draw() end
     function self:on_destroy() end
 
+    function self:is_type(type)
+        return self.type_id == type.type_id
+    end
     return self
 end
 

@@ -10,6 +10,7 @@ local crigidbody = require("core.components.crigidbody")
 local chealth = require("game.scripts.components.chealth")
 
 local eprimitive = require("core.entities.eprimitive")
+local eenemy = require("game.scripts.entities.eenemy")
 
 local eplayer = Type_registry.create_entity_type("EPlayer")
 eplayer.new = function()
@@ -58,6 +59,7 @@ eplayer.new = function()
     self.in_air = false
 
     -- SHOOTING
+    self.damage = 10
     self.hand_pos = vector2.zero
     self.crosshair_pos = vector2.zero
     self.aim_dir = vector2.zero
@@ -82,7 +84,6 @@ eplayer.new = function()
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
-        print(self.health_comp.health)
         self.is_grounded = self:ground_check()
         self:handle_input()
         self:handle_jump(dt)
@@ -142,8 +143,6 @@ eplayer.new = function()
                 self.rb_comp.velocity.x + jump_velocity.x,
                 jump_velocity.y
             )
-
-            self.health_comp:damage(10)
         end
     end
 
@@ -172,7 +171,11 @@ eplayer.new = function()
             false
         )
 
-        -- World:create_entity(eprimitive, self.)
+        if self.hit.blocking then
+            if self.hit.object:is_type(eenemy) then
+                self.hit.object:on_hit(self.aim_dir, self.damage)
+            end
+        end
     end
 
     function self:dash()
@@ -261,9 +264,6 @@ eplayer.new = function()
             RayLayer.world,
             true
         )
-
-        if self.hit.blocking then
-        end
     end
 
     return self
