@@ -11,6 +11,7 @@ local chealth = require("game.scripts.components.chealth")
 
 local eprimitive = require("core.entities.eprimitive")
 local eenemy = require("game.scripts.entities.eenemy")
+local epickup = require("game.scripts.entities.epickup")
 
 local eplayer = Type_registry.create_entity_type("EPlayer")
 eplayer.new = function()
@@ -48,8 +49,9 @@ eplayer.new = function()
     
     -- JUMP
     self.jump_speed = 12
-    self.jumps = 2
     self.do_jump = false
+    self.jumped = false
+
     -- wall collision
     self.wall_jump_y = 1
     self.jump_normal = vector2.zero
@@ -60,16 +62,19 @@ eplayer.new = function()
 
     -- SHOOTING
     self.damage = 10
+    self.ammo_max = 5
+    self.ammo = 5
     self.hand_pos = vector2.zero
     self.crosshair_pos = vector2.zero
     self.aim_dir = vector2.zero
-    self.recoil = 10
+    self.recoil = 12
     self.hit = {}
+
+    self.delta_position = vector2.zero
     
     local super_load = self.load
     function self:load()
         super_load(self)
-        self.rb_comp:init(self.box_comp)
         self.mesh_comp.filter = mesh.quad
         self.mesh_comp.color = {0.5,0.5,0.5}
 
@@ -79,6 +84,10 @@ eplayer.new = function()
         self.rb_comp.gravity = 30
         self.rb_comp.friction = self.wall_friction
         self.can_dash = true
+        self.jumps = self.jumps_max
+
+        self.delta_position = self.transform.position
+        self.ammo = self.ammo_max
     end
 
     local super_update = self.update
@@ -102,6 +111,10 @@ eplayer.new = function()
             self:dash()
         end
 
+        -- self.delta_position = self.delta_position - self.transform.position
+        -- self.delta_position = self.transform.position
+        -- -- print(self.delta_position)
+
         -- jump
         self.jump_normal = self.collision_normal - vector2.new(0,1) * self.wall_jump_y
         self.jump_normal = self.jump_normal:normalized()
@@ -117,6 +130,7 @@ eplayer.new = function()
         -- movement
         if self.is_grounded then
             self.rb_comp:add_velocity(vector2.new(self.input.movement, 0) * self.speed)
+            self.jumps = self.jumps_max
         else
             self.rb_comp:add_velocity(vector2.new(self.input.movement, 0) * self.air_control * self.speed)
         end
@@ -138,16 +152,16 @@ eplayer.new = function()
         self.in_air = self.coyote_timer <= 0
 
         if Input.get_key_down(Key.Space) and self.in_air == false then
-            local jump_velocity = self.jump_normal * self.jump_speed
-            self.rb_comp.velocity = vector2.new(
-                self.rb_comp.velocity.x + jump_velocity.x,
-                jump_velocity.y
-            )
+            self:jump()
         end
     end
 
     function self:jump()
-
+        local jump_velocity = self.jump_normal * self.jump_speed
+        self.rb_comp.velocity = vector2.new(
+            self.rb_comp.velocity.x + jump_velocity.x,
+            jump_velocity.y
+        )
     end
 
     function self:handle_aim()
@@ -159,9 +173,22 @@ eplayer.new = function()
     end
 
     function self:shoot()
+        if self.ammo <= 0 then
+            print("no ammo")
+            return
+        end
+        self.ammo = self.ammo - 1
         -- recoil
+        local bullet = World:create_entity(epickup, self.hand_pos)
+        bullet.rb_comp.velocity = vector2.new(0, -5)
+
         local recoil_velocity = -self.aim_dir * self.recoil
-        self.rb_comp.velocity = self.rb_comp.velocity * 0.2 + recoil_velocity
+        if self.is_grounded == true and recoil_velocity.y > 0 then
+            self.rb_comp.velocity = vector2.new(self.rb_comp.velocity.x * 0.2 + recoil_velocity.x, 0)
+        else
+            self.rb_comp.velocity = self.rb_comp.velocity * 0.2 + recoil_velocity
+        end
+
         collision.raycast(
             self.hand_pos,
             self.aim_dir,

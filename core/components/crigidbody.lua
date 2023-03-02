@@ -2,6 +2,7 @@ require "core.ecs"
 local collision = require("core.collision.collision")
 local component = require("core.ecs.component")
 local vector2 = require("core.vector2")
+local cbox_collider = require("core.components.cbox_collider")
 
 local crigidbody = Type_registry.create_component_type("CRigidbody")
 crigidbody.new = function ()
@@ -46,11 +47,6 @@ crigidbody.new = function ()
         self.velocity = self.velocity + vec * 0.01
     end
 
-    function self:init(col)
-        self.collider = col
-        World:add_physics_body(self)
-    end
-
     function self:dynamic_behaviour(dt)
         if self.sweep_x == true then
             
@@ -76,10 +72,18 @@ crigidbody.new = function ()
     local super_load = self.load
     function self:load()
         super_load(self)
+
+        self.collider = self.owner:get_component(cbox_collider)
+
+        if self.collider == nil then
+            print("Error: rigidbody doesn't have valid collider")
+            return
+        end
         self.contact_x = false
         self.contact_y = false
         self.sweep_buffer_x = 0
         self.sweep_buffer_y = 0
+        World:add_physics_body(self)
     end
 
 
@@ -177,6 +181,17 @@ crigidbody.new = function ()
     local super_on_destroy = self.on_destroy
     function self:on_destroy()
         super_on_destroy(self)
+        World:remove_physics_body(self)
+    end
+
+    local super_set_enable = self.set_enable
+    function self:set_enable()
+        super_set_enable(self)
+        World:add_physics_body(self)
+    end
+    local super_set_disable = self.set_disable
+    function self:set_disable()
+        super_set_disable(self)
         World:remove_physics_body(self)
     end
 

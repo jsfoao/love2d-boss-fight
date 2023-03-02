@@ -144,6 +144,17 @@ cbox_collider.new = function ()
         super_on_destroy(self)
         World:remove_collider(self)
     end
+
+    local super_set_enable = self.set_enable
+    function self:set_enable()
+        super_set_enable(self)
+        World:add_collider(self)
+    end
+    local super_set_disable = self.set_disable
+    function self:set_disable()
+        super_set_disable(self)
+        World:remove_collider(self)
+    end
     return self
 end
 return cbox_collider

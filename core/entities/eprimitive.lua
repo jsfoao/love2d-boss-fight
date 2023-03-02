@@ -24,7 +24,6 @@ eprimitive.new = function()
     local super_load = self.load
     function self:load()
         super_load(self)
-        self.rb_comp:init(self.box_comp)
         self.mesh_comp.filter = mesh.quad
     end
 

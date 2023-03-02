@@ -7,6 +7,7 @@ local eprimitive = require("core.entities.eprimitive")
 local ecamera = require("core.entities.ecamera")
 local eplayer = require("game.scripts.entities.eplayer")
 local eenemy = require("game.scripts.entities.eenemy")
+local epickup = require("game.scripts.entities.epickup")
 
 local gmmain_mode = {}
 gmmain_mode.new = function ()
@@ -54,7 +55,6 @@ gmmain_mode.new = function ()
 
         -- ENEMY
         local enemy = World:create_entity(eenemy, vector2.new(2,0))
-
     end
 
     function self:update(dt)

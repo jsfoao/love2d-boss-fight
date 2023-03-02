@@ -13,6 +13,12 @@ object.new = function ()
     function self:fixed_update(dt) end
     function self:draw() end
     function self:on_destroy() end
+    function self:set_enable() 
+        self.enabled = true
+    end
+    function self:set_disable()
+        self.enabled = false
+    end
 
     function self:is_type(type)
         return self.type_id == type.type_id
