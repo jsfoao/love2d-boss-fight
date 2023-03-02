@@ -46,21 +46,21 @@ eplayer.new = function()
     -- COLLISIONS
     self.sweep_offset = 0.3
     self.is_grounded = false
+    -- wall collision
+    self.wall_jump_y = 1
+    self.jump_normal = vector2.zero
     
     -- JUMP
     self.jump_speed = 12
     self.do_jump = false
     self.jumped = false
-
-    -- wall collision
-    self.wall_jump_y = 1
-    self.jump_normal = vector2.zero
     -- coyote time
     self.coyote_goal = 0.1
     self.coyote_timer = 0
     self.in_air = false
 
-    -- SHOOTING
+    -- COMBAT
+    -- gun
     self.damage = 10
     self.ammo_max = 5
     self.ammo = 5
@@ -69,6 +69,8 @@ eplayer.new = function()
     self.aim_dir = vector2.zero
     self.recoil = 12
     self.hit = {}
+    -- enemy
+    self.knockback_multiplier = 0.8
 
     self.delta_position = vector2.zero
     
@@ -88,6 +90,7 @@ eplayer.new = function()
         self.delta_position = self.transform.position
         self.ammo = self.ammo_max
 
+        self.health_comp.bar_color = {0,1,0}
         -- self.box_comp.layer = CollisionLayer.player
     end
 
@@ -217,9 +220,23 @@ eplayer.new = function()
         if self.can_dash == false then
             return
         end
+
         self.can_dash = false
-        local dash_velocity = vector2.new(self.input.movement, 0) * self.dash_speed
-        self.rb_comp.velocity = self.rb_comp.velocity * 0.5 + dash_velocity
+        local dash_velocity = vector2.zero
+        if self.input.movement == 0 then
+            local velocity = 0
+            if self.rb_comp.velocity.x >= 0 then
+                velocity = 1
+            else
+                velocity = -1
+            end
+            dash_velocity = vector2.new(velocity , 0) * self.dash_speed
+            self.rb_comp.velocity = self.rb_comp.velocity * 0.5 + dash_velocity
+        else
+            print("dash2")
+            local dash_velocity = vector2.new(self.input.movement, 0) * self.dash_speed
+            self.rb_comp.velocity = self.rb_comp.velocity * 0.5 + dash_velocity
+        end
     end
 
     function self:handle_input()
@@ -272,6 +289,13 @@ eplayer.new = function()
 
     function self:on_pickup(pickup)
         self.ammo = self.ammo + 1
+    end
+
+    function self:on_attacked(enemy)
+        self.health_comp:damage(enemy.damage)
+
+        local dir = self.transform.position - enemy.transform.position
+        self.rb_comp.velocity = dir * enemy.damage * self.knockback_multiplier
     end
 
     local super_draw = self.draw

@@ -27,6 +27,9 @@ ccamera.new = function ()
     end
 
     function self:world_to_screen(world_pos)
+        if self.view_mtx == nil then
+            return vector2.zero
+        end
         local p = matrix:new({world_pos.x, world_pos.y, 1})
         local m = matrix:new(3, "I")
         m = matrix.mul(m, matrix.translate(p[1][1], p[2][1]))
@@ -38,6 +41,9 @@ ccamera.new = function ()
     end
 
     function self:screen_to_world(screen_pos)
+        if self.view_mtx == nil then
+            return vector2.zero
+        end
         local p = matrix:new({screen_pos.x, screen_pos.y, 1})
         local m = matrix:new(3, "I")
         m = matrix.mul(m, matrix.translate(-self.position.x, self.position.y))

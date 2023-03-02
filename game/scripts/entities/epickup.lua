@@ -25,6 +25,7 @@ epickup.new = function()
     self.rotation_rate = 0
     self.rotation_friction = 1
     self.is_grounded = false
+    self.active_pickup = true
     
     local super_load = self.load
     function self:load()
@@ -34,6 +35,7 @@ epickup.new = function()
         self.box_overlap_comp.on_collision_enter_callback = self.on_overlap_enter
 
         
+        -- initialize overlap box for picking up
         self.box_overlap_comp.lock.scale = false
         self.box_overlap_comp.scale = vector2.new(0.5,0.5)
         self.box_overlap_comp.debug = true
@@ -41,16 +43,27 @@ epickup.new = function()
         self.box_overlap_comp.layer = CollisionLayer.dynamic
         
 
+        -- disable all collision with rays so it doesn't block aim raycast
         self.box_comp:set_ray_layer_all_disable()
         self.box_overlap_comp:set_ray_layer_all_disable()
 
-        self.box_overlap_comp:log_layers()
-
+        self.mesh_comp.z = 2
     end
 
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
+        -- interpolate to player when picking up instead of destroying immediately
+        if self.active_pickup == false then
+            local dir = self.transform.position - Player.transform.position
+            local dist = dir:len()
+            self.transform.position = math.lerp(self.transform.position, Player.transform.position, 10 * dt)
+
+            if dist <= 0.4 then
+                World:destroy_entity(self)
+            end
+        end
+
         if self.is_grounded == true then
             return
         end
@@ -58,10 +71,20 @@ epickup.new = function()
         self.rotation_rate = self.rotation_rate - self.rotation_rate * self.rotation_friction * dt
     end
 
+    function self:pickup()
+        if self.active_pickup == false then
+            return
+        end
+        self.active_pickup = false
+        Player:on_pickup(self)
+        self.rb_comp:set_disable()
+        self.box_comp:set_disable()
+    end
+
+    -- pickup logic
     function self:on_overlap_enter(other)
         if other.owner == Player then
-            Player:on_pickup(self.owner)
-            World:destroy_entity(self.owner)
+            self.owner:pickup()
         end
     end
 

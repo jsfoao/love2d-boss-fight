@@ -20,6 +20,7 @@ chealth.new = function ()
     self.draw_health = true
     self.bar_scale = vector2.new(1.2, 0.2)
     self.bar_relative_position = vector2.new(0, -0.8)
+    self.bar_color = {1,0,0}
 
     local super_load = self.load
     function self:load()
@@ -50,6 +51,11 @@ chealth.new = function ()
             self.health = self.health
         end
     end
+
+    function self:heal_to_max()
+        local to_max = self.health_max - self.health
+        self.health = self.health + to_max
+    end
     
 
     local super_draw = self.draw
@@ -62,7 +68,7 @@ chealth.new = function ()
             local inner_max_scale = vector2.new(self.bar_scale.x - outline * 2, self.bar_scale.y - outline * 2)
             local inner_current_scale = vector2.new(self.health * (inner_max_scale.x / self.health_max), inner_max_scale.y)
             debug.quad("fill", position, self.bar_scale, 0, {0.6,0.6,0.6})
-            debug.mesh("fill", posl, inner_current_scale, 0, mesh.quadr, {1,0,0})
+            debug.mesh("fill", posl, inner_current_scale, 0, mesh.quadr, self.bar_color)
         end
 
     end
