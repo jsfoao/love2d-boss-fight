@@ -78,7 +78,6 @@ eplayer.new = function()
         self.mesh_comp.filter = mesh.quad
         self.mesh_comp.color = {0.5,0.5,0.5}
 
-        self.box_comp:set_layer_enable(CollisionLayer.world, false)
         self.box_comp:log_layers()
 
         self.rb_comp.gravity = 30
@@ -88,6 +87,8 @@ eplayer.new = function()
 
         self.delta_position = self.transform.position
         self.ammo = self.ammo_max
+
+        -- self.box_comp.layer = CollisionLayer.player
     end
 
     local super_update = self.update
@@ -179,8 +180,15 @@ eplayer.new = function()
         end
         self.ammo = self.ammo - 1
         -- recoil
-        local bullet = World:create_entity(epickup, self.hand_pos)
-        bullet.rb_comp.velocity = vector2.new(0, -5)
+        local bullet = World:create_entity(epickup, self.hand_pos + self.aim_dir * 0.2)
+        -- sketch aka rotate 90 deg aim direction. Add aim direction to angle the bullet direction forward
+        -- sketch counter clockwise
+        if self.aim_dir.x >= 0 then
+            bullet.rb_comp.velocity = vector2.new(self.aim_dir.y, -self.aim_dir.x) * 5 + self.aim_dir * 2
+        -- sketch clockwise
+        else
+            bullet.rb_comp.velocity = vector2.new(-self.aim_dir.y, self.aim_dir.x) * 5 + self.aim_dir * 2
+        end
 
         local recoil_velocity = -self.aim_dir * self.recoil
         if self.is_grounded == true and recoil_velocity.y > 0 then
@@ -212,7 +220,6 @@ eplayer.new = function()
         self.can_dash = false
         local dash_velocity = vector2.new(self.input.movement, 0) * self.dash_speed
         self.rb_comp.velocity = self.rb_comp.velocity * 0.5 + dash_velocity
-        print("dash")
     end
 
     function self:handle_input()
@@ -261,6 +268,10 @@ eplayer.new = function()
 
     function self.ground_check()
         return not (self.get_collision_normal() == vector2.zero)
+    end
+
+    function self:on_pickup(pickup)
+        self.ammo = self.ammo + 1
     end
 
     local super_draw = self.draw

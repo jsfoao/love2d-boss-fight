@@ -10,11 +10,14 @@ ccollider.new = function ()
     self.layer = CollisionLayer.world
     self.layer_matrix = {}
     self.ray_layer_matrix = {}
+    self.init_layers_true = true
     
     local super_load = self.load
     function self:load()
         super_load(self)
-        self:init_layers()
+        if self.init_layers_true then
+            self:init_layers()
+        end
     end
 
     function self:init_layers()
@@ -37,13 +40,9 @@ ccollider.new = function ()
         end
     end
 
-    function self:set_only_layer_enable(layer, enable)
-        for k, v in pairs(self.layer_matrix) do
-            if v.id == layer.id then
-                v.enable = enable
-            else
-                v.enable = not enable
-            end
+    function self:set_ray_layer_all_disable()
+        for k, v in pairs(self.ray_layer_matrix) do
+            v.enable = false
         end
     end
 
@@ -52,6 +51,16 @@ ccollider.new = function ()
             if v.id == layer.id then
                 v.enable = enable
                 return
+            end
+        end
+    end
+
+    function self:set_only_layer_enable(layer, enable)
+        for k, v in pairs(self.layer_matrix) do
+            if v.id == layer.id then
+                v.enable = enable
+            else
+                v.enable = not enable
             end
         end
     end
@@ -73,11 +82,13 @@ ccollider.new = function ()
     end
 
     function self:log_layers()
-        print("-- CollisionLayer --")
+        print "> Layer"
+        print(self.layer.name)
+        print("> Collision Layers")
         for k, v in pairs(self.layer_matrix) do
             print(string.format("%s (%s): %s", v.name, v.id, v.enable))
         end
-        print("-- RayLayer --")
+        print("> Ray Layers")
         for k, v in pairs(self.ray_layer_matrix) do
             print(string.format("%s (%s): %s", v.name, v.id, v.enable))
         end

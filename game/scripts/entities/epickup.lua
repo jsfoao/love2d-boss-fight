@@ -33,10 +33,19 @@ epickup.new = function()
         self.box_comp.on_collision_enter_callback = self.on_collision_enter
         self.box_overlap_comp.on_collision_enter_callback = self.on_overlap_enter
 
+        
         self.box_overlap_comp.lock.scale = false
-        self.box_overlap_comp.scale = vector2.new(1,1)
+        self.box_overlap_comp.scale = vector2.new(0.5,0.5)
         self.box_overlap_comp.debug = true
+        self.box_overlap_comp.init_layers_true = false
+        self.box_overlap_comp.layer = CollisionLayer.dynamic
+        
+
+        self.box_comp:set_ray_layer_all_disable()
+        self.box_overlap_comp:set_ray_layer_all_disable()
+
         self.box_overlap_comp:log_layers()
+
     end
 
     local super_update = self.update
@@ -50,16 +59,30 @@ epickup.new = function()
     end
 
     function self:on_overlap_enter(other)
-        print("here")
+        if other.owner == Player then
+            Player:on_pickup(self.owner)
+            World:destroy_entity(self.owner)
+        end
     end
 
     function self:on_collision_enter(other)
-        self.owner.is_grounded = true
-        self.owner.transform.rotation = 0
+        if self.owner.is_grounded == true then
+            return
+        end
 
-        -- disable physics, not necessary anymore since object is on ground to be picked up
-        self.owner.rb_comp:set_disable()
-        self.owner.box_comp:set_disable()
+        if other.owner:is_type(epickup) then
+            return
+        end
+
+        -- ensures components get disabled only in contact with ground floor and not with side or top platforms
+        if self.owner.rb_comp.contact_y == true and self.owner.rb_comp.penetration_y >= 0 then
+            self.owner.is_grounded = true
+            self.owner.transform.rotation = 0
+    
+            -- disable physics, not necessary anymore since object is on ground to be picked up
+            self.owner.rb_comp:set_disable()
+            self.owner.box_comp:set_disable()
+        end
     end
 
     local super_draw = self.draw
