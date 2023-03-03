@@ -219,6 +219,10 @@ eplayer.new = function()
             false
         )
 
+        if self.hit.object == nil then
+            return
+        end
+
         if self.hit.blocking then
             if self.hit.object:is_type(eenemy) then
                 self.hit.object:on_hit(self.aim_dir, self.damage)

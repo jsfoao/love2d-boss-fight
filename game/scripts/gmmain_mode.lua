@@ -82,7 +82,7 @@ gmmain_mode.new = function ()
     function self:update(dt)
         if self.countdown_timer > 0 and self.countdown_timer <= 3 then
             self.countdown_timer = self.countdown_timer - dt
-            self.camera.z = self.camera_default_z - self.countdown_timer / 25
+            self.camera.z = self.camera_default_z + self.countdown / 25
             local cached_countdown = self.countdown
             self.countdown = math.floor(self.countdown_timer + 1)
             if self.countdown ~= cached_countdown then
@@ -99,6 +99,8 @@ gmmain_mode.new = function ()
         if Player ~= nil then
             Camera.owner.transform.position = math.lerp(Camera.owner.transform.position, vector2.new(Player.transform.position.x * 5, Player.transform.position.y * -5), self.camera_speed * dt)
         end
+
+        print(#self.enemies)
     end
 
     function self:restart_stages()
@@ -128,20 +130,24 @@ gmmain_mode.new = function ()
 
     function self:destroy_all_enemies()
         for key, value in pairs(self.enemies) do
-            World:destroy_entity(value)
+            self:destroy_enemy(value)
         end
     end
 
     function self:destroy_enemy(enemy)
+        if enemy == nil then
+            return
+        end
         for i = 1, #self.enemies, 1 do
             if enemy.id == self.enemies[i].id then
                 table.remove(self.enemies, i)
                 World:destroy_entity(enemy)
-            end
-        end
 
-        if #self.enemies == 0 then
-            self:on_stage_cleared()
+                if #self.enemies == 0 then
+                    self:on_stage_cleared()
+                end
+                return
+            end
         end
     end
 
