@@ -2,12 +2,12 @@
 
 [Download Latest Build](https://github.com/jsfoao/love2d-boss-fight/releases/tag/release)
 
-## Controls: 
-AD : Movement
-Space: Jump
-Left Shift: Dash
-Mouse: Aim
-MouseLeft: Shoot
+## Controls
+* AD : Movement
+* Space: Jump
+* Left Shift: Dash
+* Mouse: Aim
+* MouseLeft: Shoot
 
 ## Highlights
 * ECS
