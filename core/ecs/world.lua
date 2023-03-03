@@ -116,6 +116,7 @@ world.new = function ()
                 e:draw()
             end
         end
+        self.game_mode:late_draw()
     end
 
     function self:log()

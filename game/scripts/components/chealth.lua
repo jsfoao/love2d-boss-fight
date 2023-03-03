@@ -12,9 +12,9 @@ chealth.new = function ()
     self.health = 0
     self.dead = false
 
-    self.on_heal = nil
-    self.on_damage = nil
-    self.on_dead = nil
+    self.on_heal_callback = nil
+    self.on_damage_callback = nil
+    self.on_dead_callback = nil
 
     -- UI
     self.draw_health = true
@@ -30,22 +30,22 @@ chealth.new = function ()
 
     function self:damage(value)
         self.health = self.health - value
-        if self.on_damage ~= nil then
-            self:on_damage(value)
+        if self.on_damage_callback ~= nil then
+            self:on_damage_callback(value)
         end
         if self.health <= 0 then
             self.health = 0
             self.dead = true
-            if self.on_dead ~= nil then
-                self:on_dead()
+            if self.on_dead_callback ~= nil then
+                self:on_dead_callback()
             end
         end
     end
 
     function self:heal(value)
         self.health = self.health + value
-        if self.on_heal ~= nil then
-            self:on_heal(value)
+        if self.on_heal_callback ~= nil then
+            self:on_heal_callback(value)
         end
         if self.health >= self.health then
             self.health = self.health
@@ -53,6 +53,7 @@ chealth.new = function ()
     end
 
     function self:heal_to_max()
+        self.dead = false
         local to_max = self.health_max - self.health
         self.health = self.health + to_max
     end

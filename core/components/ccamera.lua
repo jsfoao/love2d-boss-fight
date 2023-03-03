@@ -14,6 +14,7 @@ ccamera.new = function ()
     self.ratio_x = 2
     self.ratio_y = 2
 
+
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
@@ -52,6 +53,10 @@ ccamera.new = function ()
         local inverted = matrix.invert(m)
         local world_pos_mtx = matrix.mul(inverted, p)
         return vector2.new(world_pos_mtx[1][1], world_pos_mtx[2][1])
+    end
+
+    function self:get_screen_center()
+        return vector2.new(love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
     end
 
     return self

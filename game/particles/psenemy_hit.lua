@@ -17,32 +17,32 @@ module = {
 }
 ]]
 local LG        = love.graphics
-local particles = {x=-114, y=87, id = nil }
+local particles = {x=0, y=0}
 
 local image1 = LG.newImage("game/assets/square.png")
 image1:setFilter("linear", "linear")
 
-local ps = LG.newParticleSystem(image1, 144)
-ps:setColors(1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1)
+local ps = LG.newParticleSystem(image1, 14)
+ps:setColors(0.76171875, 0, 0, 1, 0.2578125, 0, 0, 1)
 ps:setDirection(-1.5707963705063)
-ps:setEmissionArea("borderellipse", 51.115310668945, 51.115310668945, 0, true)
-ps:setEmissionRate(102.43240356445)
-ps:setEmitterLifetime(-1)
+ps:setEmissionArea("none", 0, 0, 0, false)
+ps:setEmissionRate(0)
+ps:setEmitterLifetime(1.026372551918)
 ps:setInsertMode("top")
-ps:setLinearAcceleration(26.998336791992, 0, 49.046127319336, 0)
+ps:setLinearAcceleration(0, 0, 0, 0)
 ps:setLinearDamping(0, 0)
 ps:setOffset(8, 8)
-ps:setParticleLifetime(0, 1.0192612409592)
-ps:setRadialAcceleration(0.10207310318947, 0.10207310318947)
+ps:setParticleLifetime(0.1280405074358, 0.49403381347656)
+ps:setRadialAcceleration(0, 0)
 ps:setRelativeRotation(false)
 ps:setRotation(0, 0)
-ps:setSizes(0.47911778092384)
+ps:setSizes(0.40000000596046)
 ps:setSizeVariation(0)
-ps:setSpeed(-66.327102661133, 37.746635437012)
+ps:setSpeed(-176.56605529785, 176.56605529785)
 ps:setSpin(0, 0)
 ps:setSpinVariation(0)
 ps:setSpread(6.2831854820251)
 ps:setTangentialAcceleration(0, 0)
-particles.id = {system=ps, kickStartSteps=0, kickStartDt=0, emitAtStart=34, blendMode="alpha", shader=nil, texturePath="square.png", texturePreset="", shaderPath="", shaderFilename="", x=0, y=0}
+table.insert(particles, {system=ps, kickStartSteps=0, kickStartDt=0, emitAtStart=14, blendMode="alpha", shader=nil, texturePath="square.png", texturePreset="", shaderPath="", shaderFilename="", x=0, y=0})
 
 return particles

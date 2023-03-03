@@ -19,12 +19,13 @@ eplayer.new = function()
     self.type_id = eplayer
     self.name = "Player"
 
-    -- components
+    -- COMPONENTS
     self.mesh_comp = self:add_component(cmesh)
     self.box_comp = self:add_component(cbox_collider)
     self.rb_comp = self:add_component(crigidbody)
     self.health_comp = self:add_component(chealth)
 
+    -- INPUT
     self.input = {
         movement = 0,
         jump_hold = false,
@@ -32,9 +33,7 @@ eplayer.new = function()
         shoot = false,
         dash = false
     }
-
-    self.collision_normal = vector2.zero
-
+    
     -- MOVEMENT
     self.speed = 50
     self.dash_speed = 15
@@ -42,8 +41,9 @@ eplayer.new = function()
     -- 0 to 1 where 1 is max control
     self.air_control = 0.9
     self.wall_friction = 2
-
+    
     -- COLLISIONS
+    self.collision_normal = vector2.zero
     self.sweep_offset = 0.3
     self.is_grounded = false
     -- wall collision
@@ -69,34 +69,46 @@ eplayer.new = function()
     self.aim_dir = vector2.zero
     self.recoil = 12
     self.hit = {}
+    self.cached_hit_pos = vector2.zero
     -- enemy
     self.knockback_multiplier = 0.8
 
-    self.delta_position = vector2.zero
-    
+    -- VISUALS
+    self.ammo_text = nil
+    self.font = love.graphics.newFont(24)
+    self.flash_ray_timer = 0
+
+
     local super_load = self.load
     function self:load()
         super_load(self)
+        -- mesh
         self.mesh_comp.filter = mesh.quad
         self.mesh_comp.color = {0.5,0.5,0.5}
 
-        self.box_comp:log_layers()
-
+        -- rigidbody
         self.rb_comp.gravity = 30
         self.rb_comp.friction = self.wall_friction
+
+        -- movement
         self.can_dash = true
         self.jumps = self.jumps_max
 
-        self.delta_position = self.transform.position
+        -- shooting
         self.ammo = self.ammo_max
-
+        self:update_ammo_text()
         self.health_comp.bar_color = {0,1,0}
-        -- self.box_comp.layer = CollisionLayer.player
+
+        self.health_comp.on_dead_callback = self.on_dead
     end
 
     local super_update = self.update
     function self:update(dt)
         super_update(self, dt)
+        if self.flash_ray_timer > 0 then
+            self.flash_ray_timer = self.flash_ray_timer - dt
+        end
+
         self.is_grounded = self:ground_check()
         self:handle_input()
         self:handle_jump(dt)
@@ -114,10 +126,6 @@ eplayer.new = function()
         if self.input.dash then
             self:dash()
         end
-
-        -- self.delta_position = self.delta_position - self.transform.position
-        -- self.delta_position = self.transform.position
-        -- -- print(self.delta_position)
 
         -- jump
         self.jump_normal = self.collision_normal - vector2.new(0,1) * self.wall_jump_y
@@ -178,10 +186,12 @@ eplayer.new = function()
 
     function self:shoot()
         if self.ammo <= 0 then
-            print("no ammo")
             return
         end
+        self.flash_ray_timer = 0.2
+        self.cached_hit_pos = self.hit.position
         self.ammo = self.ammo - 1
+        self:update_ammo_text()
         -- recoil
         local bullet = World:create_entity(epickup, self.hand_pos + self.aim_dir * 0.2)
         -- sketch aka rotate 90 deg aim direction. Add aim direction to angle the bullet direction forward
@@ -233,13 +243,15 @@ eplayer.new = function()
             dash_velocity = vector2.new(velocity , 0) * self.dash_speed
             self.rb_comp.velocity = self.rb_comp.velocity * 0.5 + dash_velocity
         else
-            print("dash2")
             local dash_velocity = vector2.new(self.input.movement, 0) * self.dash_speed
             self.rb_comp.velocity = self.rb_comp.velocity * 0.5 + dash_velocity
         end
     end
 
     function self:handle_input()
+        if self.health_comp.dead == true then
+            return
+        end
         self.input.movement = 0
         if Input.get_key_hold(Key.A) then
             self.input.movement = -1
@@ -289,6 +301,7 @@ eplayer.new = function()
 
     function self:on_pickup(pickup)
         self.ammo = self.ammo + 1
+        self:update_ammo_text()
     end
 
     function self:on_attacked(enemy)
@@ -298,10 +311,19 @@ eplayer.new = function()
         self.rb_comp.velocity = dir * enemy.damage * self.knockback_multiplier
     end
 
+    function self:on_dead()
+        self.owner.world.game_mode.countdown_timer = 3
+        self.owner.world.game_mode.stage = 0
+    end
+
+    function self:update_ammo_text()
+        self.ammo_text = love.graphics.newText(self.font, string.format("%d/%d", self.ammo, self.ammo_max))
+    end
+
     local super_draw = self.draw
     function self:draw()
         super_draw(self)
-    
+
         -- grounding
         -- debug.quad("line", self.transform.position + vector2.new(1,0) * self.sweep_offset, vector2.new(1, 1), 0, {1,0,0})
         -- debug.quad("line", self.transform.position - vector2.new(1,0) * self.sweep_offset, vector2.new(1, 1), 0, {1,0,0})
@@ -309,23 +331,30 @@ eplayer.new = function()
         -- debug.quad("line", self.transform.position - vector2.new(0,1) * self.sweep_offset, vector2.new(1, 1), 0, {1,0,0})
 
         -- aiming
-        debug.circle("fill", self.transform.position + self.aim_dir * 1, 10,10,{1,1,1})
-        debug.quad("fill", self.crosshair_pos, vector2.new(0.2,0.2), 0, {1,1,1})
-        debug.line(self.hand_pos, self.crosshair_pos, {1,0,0})
-
+        debug.circle("fill", self.transform.position + self.aim_dir * 1, 10,10, {1,1,1})
+        
         -- jump
-        if self.ground_check() then
-            debug.line(self.transform.position, self.transform.position + self.jump_normal * 1, {0,0,1})
-        end
-
+        -- if self.ground_check() then
+        --     debug.line(self.transform.position, self.transform.position + self.jump_normal * 1, {0,0,1})
+        -- end
+        
         collision.raycast(
             self.hand_pos,
             self.aim_dir,
             20,
             self.hit,
             RayLayer.world,
-            true
+            false
         )
+
+        -- draw ammo text
+        local pos = vector2.new(25, love.graphics.getHeight() - self.ammo_text:getWidth())
+        love.graphics.draw(self.ammo_text, pos.x, pos.y)
+        -- debug.line(self.hand_pos, self.crosshair_pos, {1,0,0})
+
+        if self.flash_ray_timer > 0 then
+            debug.line(self.hand_pos, self.cached_hit_pos, {1,1,1})
+        end
     end
 
     return self

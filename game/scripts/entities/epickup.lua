@@ -38,7 +38,6 @@ epickup.new = function()
         -- initialize overlap box for picking up
         self.box_overlap_comp.lock.scale = false
         self.box_overlap_comp.scale = vector2.new(0.5,0.5)
-        self.box_overlap_comp.debug = true
         self.box_overlap_comp.init_layers_true = false
         self.box_overlap_comp.layer = CollisionLayer.dynamic
         

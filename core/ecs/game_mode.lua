@@ -6,10 +6,9 @@ game_mode.new = function ()
     local self = object.new()
     self.world = nil
     function self:load() end
-
     function self:update(dt) end
-    
-    function self:draw(dt) end
+    function self:draw() end
+    function self:late_draw() end
     return self
 end
 
