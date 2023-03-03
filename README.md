@@ -2,6 +2,9 @@
 
 [Download Latest Build](https://github.com/jsfoao/love2d-boss-fight/releases/tag/release)
 
+## Gameplay
+![Demo](/docs/gameplay.gif  "Gameplay")
+
 ## Controls
 * AD : Movement
 * Space: Jump
